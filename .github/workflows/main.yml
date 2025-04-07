@@ -27,7 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'github-actions[bot]' }}
     needs:
-      - Linting
       - Formatting
     steps:
       - uses: actions/checkout@v4
