@@ -1,0 +1,10 @@
+runs: "config/runs.csv"
+output:
+  results: "results"
+  logs: "results/logs"
+
+dorado:
+  path: "path/to/dorado"
+  simplex:
+    cuda: auto #cuda:all
+    trim: "none" #"all"
