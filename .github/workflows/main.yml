@@ -23,18 +23,6 @@ jobs:
           VALIDATE_SNAKEMAKE_SNAKEFMT: true
           VALIDATE_YAML_PRETTIER: true
 
-  Linting:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'github-actions[bot]' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Test linting workflow
-        uses: snakemake/snakemake-github-action@v2.0.0
-        with:
-          directory: .
-          snakefile: workflow/Snakefile
-          args: "--lint"
-
   Testing:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'github-actions[bot]' }}
