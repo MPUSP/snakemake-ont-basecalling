@@ -1,7 +1,7 @@
 # ----------------------------------------------------- #
 # A Snakemake workflow for nanopore basecalling         #
-# using dorado.
-#                                                        #
+# using dorado.                                         #
+#                                                       #
 # Authors: Rina Ahmed-Begrich                           #
 # License: MIT                                          #
 # ----------------------------------------------------- #
@@ -105,11 +105,7 @@ onerror:
 rule all:
     input:
         expand(
-            os.path.join(LOG, "{run}", "flags", "dorado_demux_finished.flag"),
-            run=runs.index,
-        ),
-        expand(
-            os.path.join(OUTPUT, "{run}", "dorado_summary", "barcodes.txt"),
+            os.path.join(LOG, "{run}", "flags", "dorado_merged_fastqs.finished"),
             run=runs.index,
         ),
     default_target: True

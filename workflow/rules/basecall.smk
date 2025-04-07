@@ -3,7 +3,7 @@
 # -----------------------------------------------------
 rule download_model:
     output:
-        flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_download.flag")),
+        flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_download.finished")),
     params:
         dorado=os.path.normpath(config["dorado"]["path"]),
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
@@ -64,22 +64,38 @@ rule dorado_summary:
 
 
 # -----------------------------------------------------
-# module to collect all barcodes
+# module to collect all summary files
 # -----------------------------------------------------
 rule summarize_barcodes:
     input:
-        get_input_summariezed_barcodes,
+        get_input_summarized_barcodes,
     output:
         summary=os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
-        barcodes=os.path.join(OUTPUT, "{run}", "dorado_summary", "barcodes.txt"),
-    threads: workflow.cores
     log:
-        os.path.join(LOG, "{run}", "dorado_summary", "summarize_barcodes.log"),
+        os.path.join(LOG, "{run}", "dorado_summary", "summarize_all.log"),
     shell:
-        "cat {input} > {output.summary}; "
-        "cut -f 12 {output.summary} | "
-        "sort | uniq | "
-        "grep -v ^barcode > {output.barcodes} 2> {log}"
+        "cat {input} > {output.summary} 2> {log}"
+
+
+# -----------------------------------------------------
+# checkpoint rule that collects all barcodes
+# -----------------------------------------------------
+checkpoint generate_barcodes:
+    input:
+        summary=os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
+    output:
+        barcodes=os.path.join(OUTPUT, "{run}", "dorado_barcodes", "all_barcodes.txt"),
+    log:
+        os.path.join(LOG, "{run}", "dorado_barcodes", "generate_barcodes.log"),
+    shell:
+        """
+        cut -f 12 {input.summary} | 
+        sort | uniq | 
+        grep -v ^barcode > {output.barcodes} 2> {log};
+        while IFS= read -r line; do
+            touch $(dirname {output.barcodes})/$line.txt
+        done < {output.barcodes}
+        """
 
 
 # -----------------------------------------------------
@@ -91,7 +107,7 @@ rule dorado_demux:
     output:
         fastqs=directory(os.path.join(OUTPUT, "{run}", "dorado_demux", "{file}")),
         flag=touch(
-            os.path.join(LOG, "{run}", "flags", "{file}", "dorado_demux_finished.flag")
+            os.path.join(LOG, "{run}", "flags", "{file}", "dorado_demux.finished")
         ),
     threads: workflow.cores
     log:
@@ -115,4 +131,32 @@ rule collect_dorado_demux:
     input:
         aggregate_dorado_demux,
     output:
-        flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_demux_finished.flag")),
+        flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_demux.finished")),
+
+
+# -----------------------------------------------------
+# module to merge and bgzip fastq files
+# -----------------------------------------------------
+rule merge_and_bgzip_fastqs:
+    input:
+        flag=rules.collect_dorado_demux.output.flag,
+        fastqs=get_fastqs,
+    output:
+        compressed=os.path.join(OUTPUT, "{run}", "merged_fastqs", "{barcode}.fastq.gz"),
+    conda:
+        "../envs/samtools.yml"
+    log:
+        os.path.join(LOG, "{run}", "merge_and_bgzip", "{barcode}.log"),
+    shell:
+        "mkdir -p $(dirname {output.compressed}); "
+        "cat {input.fastqs} | bgzip -c > {output.compressed} 2> {log}"
+
+
+# ----------------------------------------------------------------------------
+# module that collects all merged barcode fastq files and creates a flag file
+# ----------------------------------------------------------------------------
+rule collect_merged_fastqs:
+    input:
+        aggregate_merged_fastqs,
+    output:
+        flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_merged_fastqs.finished")),
