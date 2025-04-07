@@ -108,4 +108,8 @@ rule all:
             os.path.join(LOG, "{run}", "flags", "dorado_demux_finished.flag"),
             run=runs.index,
         ),
+        expand(
+            os.path.join(OUTPUT, "{run}", "dorado_summary", "barcodes.txt"),
+            run=runs.index,
+        ),
     default_target: True

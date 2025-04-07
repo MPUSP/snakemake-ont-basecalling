@@ -20,13 +20,21 @@ def get_runs(wildcards):
 
 def get_file_names(wildcards):
     # get the file names
-    print(type(INPUT_FILE_NAME_NO_EXT[wildcards.run]))
     return INPUT_FILE_NAME_NO_EXT[wildcards.run]
 
 
 def aggregate_dorado_demux(wildcards):
     return expand(
         rules.dorado_demux.output.fastqs,
+        run=get_runs(wildcards),
+        file=get_file_names(wildcards),
+    )
+
+
+def get_input_summariezed_barcodes(wildcards):
+    # get the input files for the summarize_barcodes rule
+    return expand(
+        rules.dorado_summary.output,
         run=get_runs(wildcards),
         file=get_file_names(wildcards),
     )
