@@ -8,6 +8,7 @@ rule download_model:
         dorado=os.path.normpath(config["dorado"]["path"]),
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
         model_dir=os.path.join(OUTPUT, "model"),
+    threads: 1
     log:
         os.path.join(LOG, "{run}", "dorado_download_model", "dorado_download.log"),
     shell:
@@ -26,7 +27,9 @@ rule dorado_simplex:
         file=get_pod5,
     output:
         bam=os.path.join(OUTPUT, "{run}", "dorado_basecall", "{file}.bam"),
-    threads: workflow.cores
+    threads: 1
+    resources:
+        gpu=1,
     log:
         os.path.join(LOG, "{run}", "dorado_basecall", "{file}.log"),
     params:
@@ -54,6 +57,7 @@ rule dorado_summary:
         rules.dorado_simplex.output.bam,
     output:
         os.path.join(OUTPUT, "{run}", "dorado_summary", "{file}.summary"),
+    threads: 1
     log:
         os.path.join(LOG, "{run}", "dorado_summary", "{file}.log"),
     params:
@@ -71,6 +75,7 @@ rule summarize_barcodes:
         get_input_summarized_barcodes,
     output:
         summary=os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
+    threads: 1
     log:
         os.path.join(LOG, "{run}", "dorado_summary", "summarize_all.log"),
     shell:
@@ -85,6 +90,7 @@ checkpoint generate_barcodes:
         summary=os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
     output:
         barcodes=os.path.join(OUTPUT, "{run}", "dorado_barcodes", "all_barcodes.txt"),
+    threads: 1
     log:
         os.path.join(LOG, "{run}", "dorado_barcodes", "generate_barcodes.log"),
     shell:
@@ -109,7 +115,7 @@ rule dorado_demux:
         flag=touch(
             os.path.join(LOG, "{run}", "flags", "{file}", "dorado_demux.finished")
         ),
-    threads: workflow.cores
+    threads: int(workflow.cores * 0.2)
     log:
         os.path.join(LOG, "{run}", "dorado_demux", "{file}.log"),
     params:
@@ -118,6 +124,7 @@ rule dorado_demux:
     shell:
         "mkdir -p {output.fastqs} && "
         "{params.dorado} demux "
+        "--threads {threads} "
         "--emit-fastq "
         "--output-dir {output.fastqs} "
         "--no-classify "
@@ -132,6 +139,7 @@ rule collect_dorado_demux:
         aggregate_dorado_demux,
     output:
         flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_demux.finished")),
+    threads: 1
 
 
 # -----------------------------------------------------
@@ -145,11 +153,12 @@ rule merge_and_bgzip_fastqs:
         compressed=os.path.join(OUTPUT, "{run}", "merged_fastqs", "{barcode}.fastq.gz"),
     conda:
         "../envs/samtools.yml"
+    threads: workflow.cores
     log:
         os.path.join(LOG, "{run}", "merge_and_bgzip", "{barcode}.log"),
     shell:
         "mkdir -p $(dirname {output.compressed}); "
-        "cat {input.fastqs} | bgzip -c > {output.compressed} 2> {log}"
+        "cat {input.fastqs} | bgzip --threads {threads} -c > {output.compressed} 2> {log}"
 
 
 # ----------------------------------------------------------------------------
@@ -160,3 +169,4 @@ rule collect_merged_fastqs:
         aggregate_merged_fastqs,
     output:
         flag=touch(os.path.join(LOG, "{run}", "flags", "dorado_merged_fastqs.finished")),
+    threads: 1
