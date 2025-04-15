@@ -21,7 +21,7 @@ cyan = "\033[36m"
 end = "\033[0m"
 
 msg = f"""{cyan}\nONT-basecalling: A Snakemake workflow
-for dorado basecalling using dorado.{end}"""
+for nanopore basecalling and demultiplexing using dorado.{end}"""
 
 epilog = f"""
 {cyan}Written by {__author__}.

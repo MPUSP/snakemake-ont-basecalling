@@ -1,0 +1,18 @@
+default-resources:
+  runtime: "1h"
+  jobs: 1
+  cpus: 1
+
+# rules, which require different (more) resources:
+set-resources:
+  dorado_demux:
+    cpus: 2
+  # merge_and_bgzip_fastqs:
+  #   cpus: 1
+
+# parallelization with threads needs to be defined separately:
+set-threads:
+  dorado_simplex: 1
+  dorado_demux: 2
+  merge_and_bgzip_fastqs: 1
+  collect_merged_fastqs: 1

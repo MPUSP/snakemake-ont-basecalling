@@ -1,0 +1,34 @@
+default-resources:
+  slurm_partition: "scc-cpu"
+  mem_mb: 1800
+  runtime: "1h"
+  jobs: 400
+  cpus: 100
+
+# rules, which require different (more) resources:
+set-resources:
+  dorado_simplex:
+    slurm_partition: "gpu"
+    mem_mb: 1000 # 1 GB
+    runtime: "24h" # 24 hours
+    slurm_extra: "'--gpus=1'"
+    envmodules: "cuda"
+  collect_barcodes:
+    runtime: "2h"
+
+
+# parallelization with threads needs to be defined separately:
+set-threads:
+  dorado_simplex: 1
+  dorado_demux: 20
+  merge_and_bgzip_fastqs: 20
+
+# set local and remote storage prefixes to scratch
+default-storage-provider: fs
+local-storage-prefix: /scratch/users/$USER/snakemake-scratch
+remote-job-local-storage-prefix: /scratch/users/$USER/snakemake-scratch/$JOBID
+shared-fs-usage:
+  - persistence
+  - software-deployment
+  - sources
+  - source-cache
