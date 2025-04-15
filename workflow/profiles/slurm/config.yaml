@@ -16,7 +16,6 @@ set-resources:
   collect_barcodes:
     runtime: "2h"
 
-
 # parallelization with threads needs to be defined separately:
 set-threads:
   dorado_simplex: 1
