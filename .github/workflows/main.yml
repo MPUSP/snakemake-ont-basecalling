@@ -42,4 +42,4 @@ jobs:
         with:
           directory: .test
           snakefile: workflow/Snakefile
-          args: "--report report.zip"
+          args: "--cores 3 --report report.zip -n"
