@@ -1,2 +1,2 @@
-run_id,data_folder,basecalling_model,barcode_kit,comment
-MK1C_run_01,"data",dna_r10.4.1_e8.2_400bps_sup@v5.0.0,SQK-PCB114-24,sequencing_run_01
+run_id,data_folder,basecalling_model,barcode_kit
+MK1C_run_01,"data",dna_r10.4.1_e8.2_400bps_sup@v5.0.0,SQK-PCB114-24

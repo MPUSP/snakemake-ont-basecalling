@@ -1,6 +1,6 @@
 # ----------------------------------------------------- #
 # A Snakemake workflow for nanopore basecalling         #
-# using dorado.                                         #
+# and multiplexing using dorado.                        #
 #                                                       #
 # Authors: Rina Ahmed-Begrich                           #
 # License: MIT                                          #
@@ -31,7 +31,7 @@ Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.{end}
 # -----------------------------------------------------
 # check minimum snakemake version
 # -----------------------------------------------------
-min_version("8.0.0")
+min_version("8.24.1")
 
 
 # -----------------------------------------------------
@@ -76,7 +76,7 @@ for k in INPUT_FILE_DIC.keys():
 # optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
-    print("\n--- Bascalling started ---\n")
+    print("\n--- Dorado bascalling workflow started ---\n")
     print(f"Current working directory: {os.getcwd()}")
     print(f"Output directory: {OUTPUT}")
     print()
@@ -105,7 +105,11 @@ onerror:
 rule all:
     input:
         expand(
-            os.path.join(LOG, "{run}", "flags", "dorado_merged_fastqs.finished"),
+            os.path.join(LOG, "{run}", "flags", "dorado_demux.finished"),
+            run=runs.index,
+        ),
+        expand(
+            os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
             run=runs.index,
         ),
     default_target: True

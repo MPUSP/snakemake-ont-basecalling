@@ -28,8 +28,8 @@ rule dorado_simplex:
     output:
         bam=os.path.join(OUTPUT, "{run}", "dorado_basecall", "{file}.bam"),
     threads: 1
-    resources:
-        gpu=1,
+    # resources:
+    #     gpu=1,
     log:
         os.path.join(LOG, "{run}", "dorado_basecall", "{file}.log"),
     params:
