@@ -105,11 +105,11 @@ onerror:
 rule all:
     input:
         expand(
-            os.path.join(LOG, "{run}", "flags", "dorado_demux.finished"),
+            os.path.join(OUTPUT, "{run}", "dorado_input", "input_pod5_files.txt"),
             run=runs.index,
         ),
         expand(
-            os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
+            os.path.join(OUTPUT, "{run}", "fastq_merged", "input_files.txt"),
             run=runs.index,
         ),
     default_target: True

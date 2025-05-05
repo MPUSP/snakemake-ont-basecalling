@@ -1,4 +1,7 @@
-runs: "config/runs.csv"
+input:
+  runs: "config/runs.csv"
+  file_pattern: "*.pod5"
+
 output:
   results: "results"
   logs: "results/logs"

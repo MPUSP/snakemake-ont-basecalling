@@ -28,7 +28,7 @@ set-resources:
   collect_barcodes:
     mem_mb: 2000
     runtime: "24h"
-  merge_and_bgzip_fastqs:
+  merge_and_bgzip:
     mem_mb: 4000
     cpus_per_task: 40
     cpus: 40
@@ -38,4 +38,4 @@ set-resources:
 set-threads:
   dorado_simplex: 1
   dorado_demux: 40
-  merge_and_bgzip_fastqs: 40
+  merge_and_bgzip: 40
