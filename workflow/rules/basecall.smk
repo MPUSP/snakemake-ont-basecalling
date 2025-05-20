@@ -71,6 +71,7 @@ rule dorado_summary:
 checkpoint dorado_demux:
     input:
         bam="results/{run}/dorado_simplex/{file}.bam",
+        summary="results/{run}/dorado_summary/{file}.summary"
     output:
         fastqs=directory("results/{run}/dorado_demux/{file}"),
     params:
