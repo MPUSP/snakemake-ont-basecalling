@@ -16,4 +16,4 @@ set-resources:
 set-threads:
   dorado_simplex: 1
   dorado_demux: 2
-  merge_and_bgzip: 1
+  gzip: 1

@@ -28,19 +28,16 @@ rule dorado_simplex:
         file=get_pod5,
     output:
         bam="results/{run}/dorado_simplex/{file}.bam",
-    threads: 1
-    # resources:
-    #     gpu=1,
-    log:
-        "results/{run}/dorado_simplex/{file}.log",
     params:
-        outdir="results/{run}",
         dorado=config["dorado"]["path"],
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
         model_dir=os.path.abspath("results/model"),
         barcode_kit=lambda wc: runs.loc[wc.run, "barcode_kit"],
         cuda=config["dorado"]["simplex"]["cuda"],
         trim=config["dorado"]["simplex"]["trim"],
+    threads: 1
+    log:
+        "results/{run}/dorado_simplex/{file}.log",
     shell:
         "{params.dorado} basecaller "
         "--device {params.cuda} "
@@ -58,11 +55,11 @@ rule dorado_summary:
         "results/{run}/dorado_simplex/{file}.bam",
     output:
         "results/{run}/dorado_summary/{file}.summary",
+    params:
+        dorado=config["dorado"]["path"],
     threads: 1
     log:
         "results/{run}/dorado_summary/{file}.log",
-    params:
-        dorado=config["dorado"]["path"],
     shell:
         "{params.dorado} summary "
         "{input} > {output} 2> {log}"
@@ -76,14 +73,14 @@ checkpoint dorado_demux:
         bam="results/{run}/dorado_simplex/{file}.bam",
     output:
         fastqs=directory("results/{run}/dorado_demux/{file}"),
-    threads: int(workflow.cores * 0.2)
-    wildcard_constraints:
-        file=config["input"]["file_regex"],  #"FBC.*_0.0000[01]",
-    log:
-        "results/{run}/dorado_demux/{file}.log",
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
+    threads: int(workflow.cores * 0.2)
+    wildcard_constraints:
+        file=config["input"]["file_regex"],
+    log:
+        "results/{run}/dorado_demux/{file}.log",
     shell:
         "mkdir -p {output.fastqs} && "
         "{params.dorado} demux "
@@ -156,4 +153,6 @@ rule gzip:
     log:
         "results/{run}/dorado_aggregate/file/{barcode}_gzip.log",
     shell:
-        "cat {input.fastq} | bgzip --threads {threads} -c > {output.fastq} 2> {log}"
+        "cat {input.fastq} | "
+        "bgzip --threads {threads} -c > "
+        "{output.fastq} 2> {log}"
