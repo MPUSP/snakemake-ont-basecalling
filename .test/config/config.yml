@@ -1,10 +1,8 @@
 input:
   runs: "config/runs.csv"
-  file_pattern: "*.pod5"
-
-output:
-  results: "results"
-  logs: "results/logs"
+  file_extension: ".pod5"
+  file_regex: "FBC.*_0.0000[01]"
+  barcodes: ["04", "05", "06", "07"]
 
 dorado:
   path: "path/to/dorado"

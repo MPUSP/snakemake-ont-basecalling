@@ -7,9 +7,7 @@
 # ----------------------------------------------------- #
 
 import os
-import glob
 import pandas as pd
-import itertools
 from snakemake.utils import validate
 from snakemake.utils import min_version
 
@@ -40,36 +38,11 @@ min_version("8.24.1")
 configfile: "config/config.yml"
 
 
-LOG = config["output"]["logs"]
-OUTPUT = config["output"]["results"]
-
-
 # -----------------------------------------------------
 # load rules
 # -----------------------------------------------------
 include: "rules/common.smk"
 include: "rules/basecall.smk"
-
-
-# create dictornary with input files
-INPUT_FILE_DIC = {
-    r: glob.glob(os.path.join(runs.loc[r, "data_folder"], "*")) for r in runs.index
-}
-INPUT_FILE_NAME = {
-    r: [
-        os.path.basename(f)
-        for f in glob.glob(os.path.join(runs.loc[r, "data_folder"], "*"))
-    ]
-    for r in runs.index
-}
-INPUT_FILE_NAME_NO_EXT = {
-    r: [os.path.splitext(f)[0] for f in INPUT_FILE_NAME[r]] for r in runs.index
-}
-
-# check if pod5 files exist
-for k in INPUT_FILE_DIC.keys():
-    if len(INPUT_FILE_DIC[k]) == 0:
-        raise ValueError(f"No pod5 file found for run {k}")
 
 
 # -----------------------------------------------------
@@ -78,7 +51,7 @@ for k in INPUT_FILE_DIC.keys():
 onstart:
     print("\n--- Dorado bascalling workflow started ---\n")
     print(f"Current working directory: {os.getcwd()}")
-    print(f"Output directory: {OUTPUT}")
+    print(f"Output directory: {os.getcwd()}/results")
     print()
 
 
@@ -96,7 +69,6 @@ onerror:
     print(epilog)
     print("--- An error occurred! ---")
     print()
-    print(f"Check log files for more information: {LOG}")
 
 
 # -----------------------------------------------------
@@ -105,11 +77,7 @@ onerror:
 rule all:
     input:
         expand(
-            os.path.join(OUTPUT, "{run}", "dorado_input", "input_pod5_files.txt"),
-            run=runs.index,
-        ),
-        expand(
-            os.path.join(OUTPUT, "{run}", "fastq_merged", "input_files.txt"),
+            "results/{run}/dorado_final/input_fastq.txt",
             run=runs.index,
         ),
     default_target: True
