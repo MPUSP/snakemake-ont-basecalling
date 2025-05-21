@@ -56,6 +56,28 @@ def get_barcoded_fastq(wildcards):
     result = expand(
         "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
         run=wildcards.run,
-        barcode=config["input"]["barcodes"],
+        barcode=parse_barcodes(),
     )
     return result
+
+
+def parse_barcodes():
+    bc_string = config["input"]["barcodes"]
+    barcodes = []
+    # decompose short form to list by splitting at comma
+    for bc in bc_string.split(","):
+        if "-" in bc:
+            bc_range = list(range(*[int(i) for i in bc.split("-")]))
+            barcodes += bc_range + [bc_range[-1] + 1]
+        else:
+            barcodes += [int(bc)]
+
+    if max(barcodes) > 24 or min(barcodes) < 1:
+        raise ValueError(
+            "Barcode numbers must be between 1 and 24. "
+            "Please check config.yml -> input -> barcodes."
+        )
+    else:
+        # convert integers to strings in 2-digit format
+        barcodes = [format(i, "02") for i in barcodes]
+        return barcodes
