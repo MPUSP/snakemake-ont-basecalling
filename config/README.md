@@ -1,0 +1,44 @@
+## Running the workflow
+
+### Input data
+
+This workflow requires `pod5` input data. These input files are supplied to the workflow using a mandatory runs table linked in the `config.yml` file (default: `.test/config/runs.csv`). Each row in the runs table corresponds to a single run, for which all `pod5` files are provided via a `data_folder` column. Multiple runs can be defined in the table.
+The runs table has the following layout:
+
+| run_id      | data_folder  | basecalling_model                  | barcode_kit   |
+| ----------- | ------------ | ---------------------------------- | ------------- |
+| MK1C_run_01 | ".test/data" | dna_r10.4.1_e8.2_400bps_sup@v5.0.0 | SQK-PCB114-24 |
+
+### Execution
+
+To define rule specific resources like gpu usage, configuration profiles will be used.
+See [snakemake docs](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) on profiles for more information.
+A [default profile](workflow/profiles/default/config.yaml) for local testing and a slurm specific [cluster profile](workflow/profiles/slurm/config.yaml) is provided with this workflow.
+
+To run the workflow from command line, change to the working directory and activate the conda environment.
+
+```bash
+cd snakemake-ont-basecalling
+conda activate snakemake-ont-basecalling
+```
+
+Adjust options in the default config file `config/config.yml`. Before running the entire workflow, you can perform a dry run using:
+
+```bash
+snakemake --cores 3 --sdm conda --directory .test --dry-run
+```
+
+To run the complete workflow with test files using **conda**, execute the following command.
+
+```bash
+snakemake --cores 3 --sdm conda --directory .test
+```
+
+To run the complete workflow with test files on a slurm cluster, adjust the slurm cluster specific `config.yaml` file and execute the following command.
+
+```bash
+snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test
+```
+
+**Note:**
+It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like screen or tmux.
