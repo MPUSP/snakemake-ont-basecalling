@@ -27,7 +27,7 @@ set-resources:
     mem_mb: 4000
     cpus_per_task: 40
     cpus: 40
-    envmodules: "miniconda3"
+    envmodules: "miniforge3"
 
 # parallelization with threads needs to be defined separately:
 set-threads:

@@ -1,7 +1,7 @@
 input:
   runs: "config/runs.csv"
   file_extension: ".pod5"
-  file_regex: "FBC.*_0.0000[01]"
+  file_regex: "[A-Z]{3}[0-9]{5}\\_[0-9a-z]{8}\\_[0-9a-z]{8}\\_[0-9]+"
   barcodes: ["04", "05", "06", "07"]
 
 dorado:
