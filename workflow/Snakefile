@@ -1,33 +1,32 @@
 # ----------------------------------------------------- #
 # A Snakemake workflow for nanopore basecalling         #
 # and multiplexing using dorado.                        #
-#                                                       #
-# Authors: Rina Ahmed-Begrich                           #
-# License: MIT                                          #
 # ----------------------------------------------------- #
 
 import os
-import glob
 import pandas as pd
-import itertools
 from snakemake.utils import validate
 from snakemake.utils import min_version
 
-__author__ = "Dr. Rina Ahmed-Begrich"
 
-bold = "\033[1m"
-green = "\033[92m"
+# -----------------------------------------------------
+# meta data and run info
+# -----------------------------------------------------
+__authors__ = ["Rina Ahmed-Begrich", "Michael Jahn"]
+
 cyan = "\033[36m"
 end = "\033[0m"
 
-msg = f"""{cyan}\nONT-basecalling: A Snakemake workflow
-for nanopore basecalling and demultiplexing using dorado.{end}"""
+msg = f"""\nONT-basecalling: A Snakemake workflow
+for nanopore basecalling and demultiplexing using dorado."""
+
+prolog = f"Output directory: {os.getcwd()}/results"
 
 epilog = f"""
-{cyan}Written by {__author__}.
-Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.{end}
-
+Written by {", ".join(__authors__)}.
+Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.
 """
+
 # -----------------------------------------------------
 # check minimum snakemake version
 # -----------------------------------------------------
@@ -40,10 +39,6 @@ min_version("8.24.1")
 configfile: "config/config.yml"
 
 
-LOG = config["output"]["logs"]
-OUTPUT = config["output"]["results"]
-
-
 # -----------------------------------------------------
 # load rules
 # -----------------------------------------------------
@@ -51,52 +46,19 @@ include: "rules/common.smk"
 include: "rules/basecall.smk"
 
 
-# create dictornary with input files
-INPUT_FILE_DIC = {
-    r: glob.glob(os.path.join(runs.loc[r, "data_folder"], "*")) for r in runs.index
-}
-INPUT_FILE_NAME = {
-    r: [
-        os.path.basename(f)
-        for f in glob.glob(os.path.join(runs.loc[r, "data_folder"], "*"))
-    ]
-    for r in runs.index
-}
-INPUT_FILE_NAME_NO_EXT = {
-    r: [os.path.splitext(f)[0] for f in INPUT_FILE_NAME[r]] for r in runs.index
-}
-
-# check if pod5 files exist
-for k in INPUT_FILE_DIC.keys():
-    if len(INPUT_FILE_DIC[k]) == 0:
-        raise ValueError(f"No pod5 file found for run {k}")
-
-
 # -----------------------------------------------------
 # optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
-    print("\n--- Dorado bascalling workflow started ---\n")
-    print(f"Current working directory: {os.getcwd()}")
-    print(f"Output directory: {OUTPUT}")
-    print()
+    print(f"{cyan}\n--- Workflow started! ---\n\n{prolog}\n\n{end}")
 
 
 onsuccess:
-    print()
-    print(msg)
-    print(epilog)
-    print("--- Workflow finished! ---")
-    print()
+    print(f"{cyan}\n{msg}\n{epilog}\n--- Workflow finished! ---\n\n{end}")
 
 
 onerror:
-    print()
-    print(msg)
-    print(epilog)
-    print("--- An error occurred! ---")
-    print()
-    print(f"Check log files for more information: {LOG}")
+    print(f"{cyan}\n{msg}\n{epilog}\n --- An error occurred! ---\n\n{end}")
 
 
 # -----------------------------------------------------
@@ -105,11 +67,7 @@ onerror:
 rule all:
     input:
         expand(
-            os.path.join(LOG, "{run}", "flags", "dorado_demux.finished"),
-            run=runs.index,
-        ),
-        expand(
-            os.path.join(OUTPUT, "{run}", "dorado_summary", "all_summary.txt"),
+            "results/{run}/dorado_final/input_fastq.txt",
             run=runs.index,
         ),
     default_target: True

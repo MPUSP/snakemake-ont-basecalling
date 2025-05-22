@@ -1,88 +1,94 @@
-# read runs files
-runs = pd.read_csv(config["runs"], sep=",").set_index("run_id", drop=False)
+# -----------------------------------------------------
+# read table with run metadata
+# -----------------------------------------------------
+runs = pd.read_csv(config["input"]["runs"], sep=",").set_index("run_id", drop=False)
 
 
 # -----------------------------------------------------
-# helper functions
+# input functions
 # -----------------------------------------------------
 def get_pod5(wildcards):
-    # get the input pod5 file
     return os.path.join(
-        runs.loc[wildcards.run, "data_folder"], wildcards.file + ".pod5"
+        runs.loc[wildcards.run, "data_folder"],
+        wildcards.file + config["input"]["file_extension"],
     )
 
 
-def get_run(wildcards):
-    # get the run id
-    return runs.loc[wildcards.run, "run_id"]
-
-
-def get_file_names(wildcards):
-    # get the file names
-    return INPUT_FILE_NAME_NO_EXT[wildcards.run]
-
-
-def get_input_summarized_barcodes(wildcards):
-    # get the input files for the summarize_barcodes rule
-    return expand(
-        rules.dorado_summary.output,
-        run=get_run(wildcards),
-        file=get_file_names(wildcards),
-    )
-
-
-def get_barcode_list(wildcards):
-    # access the output of the checkpoint to dynamically retrieve the list of barcodes
-    checkpoint_output = checkpoints.generate_barcodes.get(
-        run=wildcards.run
-    ).output.barcodes
-
-    # Read the barcodes from the generated file
-    with open(checkpoint_output) as f:
-        barcodes = [line.strip() for line in f]
-    return barcodes
-
-
-def get_barcode(wildcards):
-    # access the output of the checkpoint to dynamically retrieve the barcode
-    checkpoint_output = checkpoints.generate_barcodes.get(
-        run=wildcards.run
-    ).output.barcodes
-
-    return glob_wildcards(
-        os.path.join(os.path.abspath(checkpoint_output), "{barcode}.txt")
-    ).barcode
-
-
-def aggregate_dorado_demux(wildcards):
-    return expand(
-        rules.dorado_demux.output.fastqs,
-        run=get_run(wildcards),
-        file=get_file_names(wildcards),
-    )
-
-
-def get_fastqs(wildcards):
-    # dynamically find FASTQ files for the given run_id, files, and barcode
-    fastqs = []
-    for file in INPUT_FILE_NAME_NO_EXT[wildcards.run]:
-        fastqs.append(
-            glob.glob(
-                os.path.join(
-                    OUTPUT,
-                    wildcards.run,
-                    "dorado_demux",
-                    file,
-                    f"*_{wildcards.barcode}.fastq",
-                )
-            )
+def get_prefixed_fastq(wildcards):
+    cp_out = checkpoints.dorado_demux.get(**wildcards).output[0]
+    prefix = list(
+        set(
+            glob_wildcards(
+                os.path.join(cp_out, "{prefix}_barcode{barcode}.fastq")
+            ).prefix
         )
-    return list(itertools.chain.from_iterable(fastqs))
-
-
-def aggregate_merged_fastqs(wildcards):
-    return expand(
-        rules.merge_and_bgzip_fastqs.output.compressed,
-        run=get_run(wildcards),
-        barcode=get_barcode_list(wildcards),
     )
+    result = expand(
+        "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}.fastq",
+        run=wildcards.run,
+        file=wildcards.file,
+        prefix=prefix,
+        barcode=wildcards.barcode,
+    )
+    # add empty dummy file in case a barcode is missing
+    for f in list(set(result)):
+        if not os.path.exists(f):
+            os.makedirs(os.path.dirname(f), exist_ok=True)
+            open(f, "w").close()
+    return result
+
+
+def get_filenamed_fastq(wildcards):
+    file_ext = config["input"]["file_extension"]
+    run_dir = runs.loc[wildcards.run, "data_folder"]
+    pattern = f"{run_dir}/{{file}}{file_ext}"
+    files = glob_wildcards(pattern).file
+    result = expand(
+        "results/{run}/dorado_aggregate/prefix/{file}/{barcode}.fastq",
+        run=wildcards.run,
+        file=files,
+        barcode=wildcards.barcode,
+    )
+    return result
+
+
+def get_barcoded_fastq(wildcards):
+    result = expand(
+        "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+        run=wildcards.run,
+        barcode=parse_barcodes(wildcards.run),
+    )
+    return result
+
+
+def parse_barcodes(run):
+    bc_kit = runs.loc[run, "barcode_kit"]
+    try:
+        bc_max = int(bc_kit.split("-")[-1])
+    except:
+        bc_max = 96
+    if not bc_max in [24, 96]:
+        bc_max = 96
+        print(
+            "Warning: Max number of barcodes could not be ",
+            f"determined from kit '{bc_kit}'.",
+        )
+    bc_string = config["input"]["barcodes"]
+    barcodes = []
+    # decompose short form to list by splitting at comma
+    for bc in bc_string.split(","):
+        if "-" in bc:
+            bc_range = list(range(*[int(i) for i in bc.split("-")]))
+            barcodes += bc_range + [bc_range[-1] + 1]
+        else:
+            barcodes += [int(bc)]
+
+    if max(barcodes) > bc_max or min(barcodes) < 1:
+        raise ValueError(
+            f"Barcode numbers must be between 1 and {bc_max}. "
+            "Please check config.yml -> input -> barcodes."
+        )
+    else:
+        # convert integers to strings in 2-digit format
+        barcodes = [format(i, "02") for i in barcodes]
+        return barcodes

@@ -23,19 +23,14 @@ set-resources:
     mem_mb: 2000
     cpus_per_task: 40
     cpus: 40
-  collect_dorado_demux:
-    runtime: "1h"
-  collect_barcodes:
-    mem_mb: 2000
-    runtime: "24h"
-  merge_and_bgzip_fastqs:
+  gzip:
     mem_mb: 4000
     cpus_per_task: 40
     cpus: 40
-    envmodules: "miniconda3"
+    envmodules: "miniforge3"
 
 # parallelization with threads needs to be defined separately:
 set-threads:
   dorado_simplex: 1
   dorado_demux: 40
-  merge_and_bgzip_fastqs: 40
+  gzip: 40

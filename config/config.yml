@@ -1,7 +1,8 @@
-runs: "config/runs.csv"
-output:
-  results: "results"
-  logs: "results/logs"
+input:
+  runs: "config/runs.csv"
+  file_extension: ".pod5"
+  file_regex: "[A-Z]{3}[0-9]{5}\\_[0-9a-z]{8}\\_[0-9a-z]{8}\\_[0-9]+"
+  barcodes: "1-24"
 
 dorado:
   path: "path/to/dorado"
