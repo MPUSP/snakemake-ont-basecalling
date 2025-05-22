@@ -1,9 +1,6 @@
 # ----------------------------------------------------- #
 # A Snakemake workflow for nanopore basecalling         #
 # and multiplexing using dorado.                        #
-#                                                       #
-# Authors: Rina Ahmed-Begrich                           #
-# License: MIT                                          #
 # ----------------------------------------------------- #
 
 import os
@@ -11,21 +8,25 @@ import pandas as pd
 from snakemake.utils import validate
 from snakemake.utils import min_version
 
-__author__ = "Dr. Rina Ahmed-Begrich"
 
-bold = "\033[1m"
-green = "\033[92m"
+# -----------------------------------------------------
+# meta data and run info
+# -----------------------------------------------------
+__authors__ = ["Rina Ahmed-Begrich", "Michael Jahn"]
+
 cyan = "\033[36m"
 end = "\033[0m"
 
-msg = f"""{cyan}\nONT-basecalling: A Snakemake workflow
-for nanopore basecalling and demultiplexing using dorado.{end}"""
+msg = f"""\nONT-basecalling: A Snakemake workflow
+for nanopore basecalling and demultiplexing using dorado."""
+
+prolog = f"Output directory: {os.getcwd()}/results"
 
 epilog = f"""
-{cyan}Written by {__author__}.
-Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.{end}
-
+Written by {", ".join(__authors__)}.
+Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.
 """
+
 # -----------------------------------------------------
 # check minimum snakemake version
 # -----------------------------------------------------
@@ -49,26 +50,15 @@ include: "rules/basecall.smk"
 # optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
-    print("\n--- Dorado bascalling workflow started ---\n")
-    print(f"Current working directory: {os.getcwd()}")
-    print(f"Output directory: {os.getcwd()}/results")
-    print()
+    print(f"{cyan}\n--- Workflow started! ---\n\n{prolog}\n\n{end}")
 
 
 onsuccess:
-    print()
-    print(msg)
-    print(epilog)
-    print("--- Workflow finished! ---")
-    print()
+    print(f"{cyan}\n{msg}\n{epilog}\n--- Workflow finished! ---\n\n{end}")
 
 
 onerror:
-    print()
-    print(msg)
-    print(epilog)
-    print("--- An error occurred! ---")
-    print()
+    print(f"{cyan}\n{msg}\n{epilog}\n --- An error occurred! ---\n\n{end}")
 
 
 # -----------------------------------------------------
