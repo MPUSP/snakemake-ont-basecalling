@@ -56,12 +56,23 @@ def get_barcoded_fastq(wildcards):
     result = expand(
         "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
         run=wildcards.run,
-        barcode=parse_barcodes(),
+        barcode=parse_barcodes(wildcards.run),
     )
     return result
 
 
-def parse_barcodes():
+def parse_barcodes(run):
+    bc_kit = runs.loc[run, "barcode_kit"]
+    try:
+        bc_max = int(bc_kit.split("-")[-1])
+    except:
+        bc_max = 96
+    if not bc_max in [24, 96]:
+        bc_max = 96
+        print(
+            "Warning: Max number of barcodes could not be ",
+            f"determined from kit '{bc_kit}'.",
+        )
     bc_string = config["input"]["barcodes"]
     barcodes = []
     # decompose short form to list by splitting at comma
@@ -72,9 +83,9 @@ def parse_barcodes():
         else:
             barcodes += [int(bc)]
 
-    if max(barcodes) > 24 or min(barcodes) < 1:
+    if max(barcodes) > bc_max or min(barcodes) < 1:
         raise ValueError(
-            "Barcode numbers must be between 1 and 24. "
+            f"Barcode numbers must be between 1 and {bc_max}. "
             "Please check config.yml -> input -> barcodes."
         )
     else:
