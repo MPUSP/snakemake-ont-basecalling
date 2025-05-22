@@ -3,6 +3,7 @@
 # -----------------------------------------------------
 rule download_model:
     output:
+        model=directory("results/{run}/dorado_model"),
         flag="results/{run}/dorado_model/dorado_download.finished",
     params:
         dorado=os.path.normpath(config["dorado"]["path"]),
@@ -12,10 +13,9 @@ rule download_model:
     log:
         "results/{run}/dorado_model/dorado_download.log",
     shell:
-        "mkdir -p {params.model_dir} && "
         "{params.dorado} download "
         "--model {params.model} "
-        "--models-directory {params.model_dir} 2> {log};"
+        "--models-directory {output.model} 2> {log};"
         "touch {output.flag}"
 
 
@@ -25,13 +25,13 @@ rule download_model:
 rule dorado_simplex:
     input:
         model=rules.download_model.output.flag,
+        model_dir=rules.download_model.output.model,
         file=get_pod5,
     output:
         bam="results/{run}/dorado_simplex/{file}.bam",
     params:
         dorado=config["dorado"]["path"],
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
-        model_dir=os.path.abspath("results/model"),
         barcode_kit=lambda wc: runs.loc[wc.run, "barcode_kit"],
         cuda=config["dorado"]["simplex"]["cuda"],
         trim=config["dorado"]["simplex"]["trim"],
@@ -43,7 +43,7 @@ rule dorado_simplex:
         "--device {params.cuda} "
         "--kit-name {params.barcode_kit} "
         "--trim {params.trim} "
-        "{params.model_dir}/{params.model} "
+        "{input.model_dir}/{params.model} "
         "{input.file} > {output.bam} 2> {log}"
 
 
