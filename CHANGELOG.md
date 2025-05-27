@@ -5,8 +5,7 @@
 
 ### Features
 
-* add reporting tool pycoQC, closes [#3](https://github.com/MPUSP/snakemake-ont-basecalling/issues/3) ([bccff5c](https://github.com/MPUSP/snakemake-ont-basecalling/commit/bccff5cbcc8826b45c2d52da82a10fcc2055eda1))
-* add reporting tool pycoQC, closes [#3](https://github.com/MPUSP/snakemake-ont-basecalling/issues/3) ([cadb16e](https://github.com/MPUSP/snakemake-ont-basecalling/commit/cadb16e95a915f7abc2dfbd6e5d8064a801d571c))
+* add reporting tool pycoQC, closes [#3](https://github.com/MPUSP/snakemake-ont-basecalling/issues/3) ([bccff5c](https://github.com/MPUSP/snakemake-ont-basecalling/commit/bccff5cbcc8826b45c2d52da82a10fcc2055eda1), [cadb16e](https://github.com/MPUSP/snakemake-ont-basecalling/commit/cadb16e95a915f7abc2dfbd6e5d8064a801d571c))
 
 
 ## 1.0.0 (2025-05-22)
