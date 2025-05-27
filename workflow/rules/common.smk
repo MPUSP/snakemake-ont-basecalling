@@ -92,3 +92,16 @@ def parse_barcodes(run):
         # convert integers to strings in 2-digit format
         barcodes = [format(i, "02") for i in barcodes]
         return barcodes
+
+
+def get_all_summary(wildcards):
+    file_ext = config["input"]["file_extension"]
+    run_dir = runs.loc[wildcards.run, "data_folder"]
+    pattern = f"{run_dir}/{{file}}{file_ext}"
+    files = glob_wildcards(pattern).file
+    result = expand(
+        "results/{run}/dorado_summary/{file}.summary",
+        run=wildcards.run,
+        file=files,
+    )
+    return result
