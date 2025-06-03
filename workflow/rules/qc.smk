@@ -6,7 +6,6 @@ rule prepare_summary:
         get_all_summary,
     output:
         "results/{run}/dorado_summary/all_summary.txt",
-    threads: 1
     log:
         "results/{run}/dorado_summary/all_summary.log",
     shell:
@@ -23,9 +22,7 @@ rule pycoQC_report:
     output:
         report_html="results/{run}/report/pycoQC_report.html",
         report_json="results/{run}/report/pycoQC_report.json",
-    threads: 1
     log:
         "results/{run}/report/pycoQC_report.log",
-    threads: 1
     wrapper:
         "https://raw.githubusercontent.com/MPUSP/mpusp-snakemake-wrappers/refs/heads/main/pycoqc"
