@@ -1,0 +1,51 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Config Schema"
+type: object
+properties:
+  input:
+    type: object
+    properties:
+      runs:
+        type: string
+      file_extension:
+        type: string
+      file_regex:
+        type: string
+      barcodes:
+        type: string
+    required:
+      - runs
+      - file_extension
+      - file_regex
+      - barcodes
+  dorado:
+    type: object
+    properties:
+      path:
+        type: string
+      simplex:
+        type: object
+        properties:
+          cuda:
+            type: string
+          trim:
+            type: string
+        required:
+          - cuda
+          - trim
+    required:
+      - path
+      - simplex
+  report:
+    type: object
+    properties:
+      tools:
+        type: array
+        items:
+          type: string
+    required:
+      - tools
+required:
+  - input
+  - dorado
+  - report

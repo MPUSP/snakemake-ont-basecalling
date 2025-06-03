@@ -1,0 +1,17 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Runs Schema"
+type: object
+properties:
+  run_id:
+    type: string
+  data_folder:
+    type: string
+  basecalling_model:
+    type: string
+  barcode_kit:
+    type: string
+required:
+  - run_id
+  - data_folder
+  - basecalling_model
+  - barcode_kit
