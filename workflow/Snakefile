@@ -72,7 +72,8 @@ rule all:
             run=runs.index,
         ),
         expand(
-            "results/{run}/report/pycoQC_report.html",
+            "results/{run}/report/{tool}_report.html",
             run=runs.index,
+            tool=config["report"]["tools"],
         ),
     default_target: True

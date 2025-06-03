@@ -26,3 +26,19 @@ rule pycoQC_report:
         "results/{run}/report/pycoQC_report.log",
     wrapper:
         "https://raw.githubusercontent.com/MPUSP/mpusp-snakemake-wrappers/refs/heads/main/pycoqc"
+
+
+# -----------------------------------------------------
+# generate quality control report using NanoPlot
+# -----------------------------------------------------
+rule nanoplot_report:
+    input:
+        summary=rules.prepare_summary.output,
+    output:
+        report="results/{run}/report/NanoPlot_report.html",
+    log:
+        "results/{run}/report/Nanoplot_report.log",
+    params:
+        extra="--no_static",
+    wrapper:
+        "https://raw.githubusercontent.com/MPUSP/mpusp-snakemake-wrappers/refs/heads/main/nanoplot"

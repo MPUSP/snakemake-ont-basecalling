@@ -9,3 +9,6 @@ dorado:
   simplex:
     cuda: auto #cuda:all
     trim: "none" #"all"
+
+report:
+  tools: ["pycoQC", "NanoPlot"]

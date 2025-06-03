@@ -24,7 +24,7 @@ The workflow is built using [snakemake](https://snakemake.readthedocs.io/en/stab
 4. Demultiplex ONT data (`dorado demux`)
 5. Aggregate `.fastq` files based on barcode and compress (`bgzip`)
 6. Summarize basecalling information (`dorado summary`)
-7. Collect QC metrics and generate report (`pycoQC`)
+7. Collect QC metrics and generate reports (`pycoQC`, `NanoPlot`)
 
 ---
 
@@ -119,7 +119,7 @@ snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .t
 ```
 
 **Note:**
-It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like screen or tmux.
+It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like [screen](https://www.gnu.org/software/screen/manual/screen.html) or [tmux](https://www.redhat.com/en/blog/introduction-tmux-linux).
 
 ## Authors
 
