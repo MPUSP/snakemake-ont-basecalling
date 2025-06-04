@@ -5,6 +5,13 @@ runs = pd.read_csv(config["input"]["runs"], sep=",").set_index("run_id", drop=Fa
 
 
 # -----------------------------------------------------
+# validate schema for config and run sheet
+# -----------------------------------------------------
+validate(config, "../../config/schemas/config.schema.yml")
+validate(runs, "../../config/schemas/runs.schema.yml")
+
+
+# -----------------------------------------------------
 # input functions
 # -----------------------------------------------------
 def get_pod5(wildcards):

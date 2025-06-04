@@ -7,6 +7,12 @@
 
 A Snakemake workflow to perform basecalling and demultiplexing of Oxford Nanopore ONT data using Dorado.
 
+## Usage
+
+The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/MPUSP/snakemake-ont-basecalling).
+
+If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository.
+
 ## Workflow overview
 
 This workflow uses Oxford Nanopore's basecaller [dorado](https://github.com/nanoporetech/dorado) for basecalling and demultiplexing Oxford Nanopore (ONT) data. Instead of running `dorado` as a single job that uses all `pod5` files as input, basecalling is performed on each single `pod5` file separately, resulting in a single job per `pod5` file. The basecalled bam files are then demultiplexed and a summary report will be provided.
@@ -16,16 +22,13 @@ The workflow is built using [snakemake](https://snakemake.readthedocs.io/en/stab
 2. Download the model for base calling as defined in the runs table
 3. Call bases using dorado in simplex mode on each `pod5` file separately (`dorado basecaller`)
 4. Demultiplex ONT data (`dorado demux`)
-5. Summarize base calling information (`dorado summary`)
-6. Merge `.fastq` files based on barcode and compress (`bgzip`)
-7. Collect QC metrics and generate report (`pycoQC`, `nanoPlot`)
+5. Aggregate `.fastq` files based on barcode and compress (`bgzip`)
+6. Summarize basecalling information (`dorado summary`)
+7. Collect QC metrics and generate reports (`pycoQC`, `NanoPlot`)
 
-`TODO:` Add DAG graph.
+---
 
-<!-- include overview-->
-<!-- <img src="resources/images/dag.png" align="center" /> -->
-
-<!-- --- -->
+<img src="resources/images/dag.png" align="center" />
 
 ## Requirements
 
@@ -116,7 +119,7 @@ snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .t
 ```
 
 **Note:**
-It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like screen or tmux.
+It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like [screen](https://www.gnu.org/software/screen/manual/screen.html) or [tmux](https://www.redhat.com/en/blog/introduction-tmux-linux).
 
 ## Authors
 
