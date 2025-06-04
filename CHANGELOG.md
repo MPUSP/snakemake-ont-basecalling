@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.1.0...v1.2.0) (2025-06-04)
+
+
+### Features
+
+* added nanoplot as second qc tool ([dcbebfd](https://github.com/MPUSP/snakemake-ont-basecalling/commit/dcbebfd96f281057a95880deaa2690671d62c16e))
+* added schemas ([7804fc0](https://github.com/MPUSP/snakemake-ont-basecalling/commit/7804fc050f877158ad2a57a7ca7161a497f0a0a3))
+* additions to docs, nanoplot qc, schemas ([0ac0f2e](https://github.com/MPUSP/snakemake-ont-basecalling/commit/0ac0f2e7eabaa06b3c36ed4dc6baa9718db8407e))
+
+
+### Bug Fixes
+
+* attempt to repair release please action, see https://github.com/googleapis/release-please-action/issues/1105 ([efeec85](https://github.com/MPUSP/snakemake-ont-basecalling/commit/efeec85584082fc0780433519160a0a054b30ae1))
+* linting ([9e3e867](https://github.com/MPUSP/snakemake-ont-basecalling/commit/9e3e867043989cc035dd1f1b4ae76d77b89b20f8))
+* only export report html using nanoplot. suppress exporting all plots seperately. ([02a28fa](https://github.com/MPUSP/snakemake-ont-basecalling/commit/02a28faa9aaa0968b904a90c1289cb04eba00460))
+* qc tools dont support multiple cores ([71782f9](https://github.com/MPUSP/snakemake-ont-basecalling/commit/71782f9dcf6d72f2bb97f66a78ee2de9ba4a82e6))
+
 ## [1.1.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.0.0...v1.1.0) (2025-05-27)
 
 
