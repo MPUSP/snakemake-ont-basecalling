@@ -37,8 +37,9 @@ rule nanoplot_report:
     output:
         report="results/{run}/report/NanoPlot_report.html",
     log:
-        "results/{run}/report/Nanoplot_report.log",
+        "results/{run}/report/NanoPlot_report.log",
+    threads: 1
     params:
-        extra="--no_static",
+        extra="--no_static --only-report",
     wrapper:
         "https://raw.githubusercontent.com/MPUSP/mpusp-snakemake-wrappers/refs/heads/main/nanoplot"
