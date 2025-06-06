@@ -9,6 +9,8 @@ rule download_model:
         dorado=os.path.normpath(config["dorado"]["path"]),
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
         model_dir="results/model",
+    conda:
+        "../envs/base.yml"
     threads: 1
     log:
         "results/{run}/dorado_model/dorado_download.log",
@@ -35,6 +37,8 @@ rule dorado_simplex:
         barcode_kit=lambda wc: runs.loc[wc.run, "barcode_kit"],
         cuda=config["dorado"]["simplex"]["cuda"],
         trim=config["dorado"]["simplex"]["trim"],
+    conda:
+        "../envs/base.yml"
     threads: 1
     log:
         "results/{run}/dorado_simplex/{file}.log",
@@ -57,6 +61,8 @@ rule dorado_summary:
         "results/{run}/dorado_summary/{file}.summary",
     params:
         dorado=config["dorado"]["path"],
+    conda:
+        "../envs/base.yml"
     threads: 1
     log:
         "results/{run}/dorado_summary/{file}.log",
@@ -77,6 +83,8 @@ checkpoint dorado_demux:
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
+    conda:
+        "../envs/base.yml"
     threads: int(workflow.cores * 0.2)
     wildcard_constraints:
         file=config["input"]["file_regex"],
