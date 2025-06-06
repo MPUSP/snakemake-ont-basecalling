@@ -1,4 +1,4 @@
-name: dorado
+name: base
 channels:
   - conda-forge
   - bioconda

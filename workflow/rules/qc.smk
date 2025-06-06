@@ -6,10 +6,13 @@ rule prepare_summary:
         get_all_summary,
     output:
         "results/{run}/dorado_summary/all_summary.txt",
+    conda:
+        "../envs/base.yml"
     log:
         "results/{run}/dorado_summary/all_summary.log",
     shell:
-        "(head -n 1 {input[0]}; "
+        "firstfile=`echo {input} | cut -f 1 -d ' '`;"
+        "(head -n 1 ${{firstfile}}; "
         "tail -n +2 -q {input}) > {output} 2> {log}"
 
 
