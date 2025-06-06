@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.1](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.0...v1.2.1) (2025-06-06)
+
+
+### Bug Fixes
+
+* added catalog config yml ([7b2b792](https://github.com/MPUSP/snakemake-ont-basecalling/commit/7b2b792c305cef87519103a7efce190a861d4e86))
+* added linting test to github actions. ([77122be](https://github.com/MPUSP/snakemake-ont-basecalling/commit/77122be3ddb4ce65074b3c9373c52c212ff606cb))
+* linting errors, e.g. added base conda envs ([221a5f0](https://github.com/MPUSP/snakemake-ont-basecalling/commit/221a5f05fe7fbecea254f29e1c61d4ba47c65b4a))
+* minor changes to make workflow compatible with catalog ([8496556](https://github.com/MPUSP/snakemake-ont-basecalling/commit/8496556d3779146b8b8160d08db853fd460e65d0))
+
 ## [1.2.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.1.0...v1.2.0) (2025-06-04)
 
 
