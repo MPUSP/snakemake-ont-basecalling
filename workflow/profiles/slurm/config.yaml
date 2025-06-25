@@ -1,36 +1,43 @@
 executor: slurm
-jobs: 100
-local-cores: 400
+jobs: 1000
+local-cores: 40
+retries: 1
+sdm: conda
 
 # set the default resources for all rules
 default-resources:
   slurm_partition: "medium"
-  mem_mb: 1000
-  runtime: "12h"
-  cpus_per_task: 1
+  runtime: "2h"
   nodes: 1
-  tasks: 1
-  cpus: 1
 
 # rules, which require different (more) resources:
 set-resources:
+  download_model:
+    mem_mb: 16000
+    cpus_per_task: 4
   dorado_simplex:
-    slurm_partition: "gpu"
-    mem_mb: 4000
-    slurm_extra: "'--gpus=1'"
+    slurm_partition: "scc-gpu"
+    cpus_per_task: 4
+    slurm_extra: "--gpus=1"
     envmodules: "cuda"
+    mem_mb: 16000
   dorado_demux:
-    mem_mb: 2000
+    mem_mb: 16000
     cpus_per_task: 40
-    cpus: 40
   gzip:
-    mem_mb: 4000
+    mem_mb: 16000
     cpus_per_task: 40
-    cpus: 40
-    envmodules: "miniforge3"
+  pycoQC_report:
+    mem_mb: 16000
+    cpus_per_task: 12
+  nanoplot_report:
+    mem_mb: 16000
+    cpus_per_task: 12
 
-# parallelization with threads needs to be defined separately:
+# threads define how much resources each rule may take, overrides .smk defs:
 set-threads:
   dorado_simplex: 1
   dorado_demux: 40
   gzip: 40
+  pycoQC_report: 12
+  nanoplot_report: 12
