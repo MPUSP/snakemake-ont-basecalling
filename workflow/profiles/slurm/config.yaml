@@ -1,6 +1,8 @@
 executor: slurm
 jobs: 1000
 local-cores: 40
+retries: 1
+sdm: conda
 
 # set the default resources for all rules
 default-resources:
@@ -10,6 +12,9 @@ default-resources:
 
 # rules, which require different (more) resources:
 set-resources:
+  download_model:
+    mem_mb: 16000
+    cpus_per_task: 4
   dorado_simplex:
     slurm_partition: "scc-gpu"
     cpus_per_task: 4
