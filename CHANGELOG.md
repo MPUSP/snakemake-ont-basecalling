@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.1...v1.2.2) (2025-06-25)
+
+
+### Bug Fixes
+
+* modified per rule resources for slurm ([#16](https://github.com/MPUSP/snakemake-ont-basecalling/issues/16)) ([a33ac11](https://github.com/MPUSP/snakemake-ont-basecalling/commit/a33ac1121ac6a151279279c3b68c4f208d628f76))
+
 ## [1.2.1](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.0...v1.2.1) (2025-06-06)
 
 
