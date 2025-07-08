@@ -42,3 +42,22 @@ snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .t
 
 **Note:**
 It is recommended to start the snakemake pipeline on the cluster using a session multiplexer like screen or tmux.
+
+### Parameters
+
+This table lists all parameters that can be used to run the workflow.
+
+| Parameter      | Type   | Details                                   | Default                  |
+| -------------- | ------ | ----------------------------------------- | ------------------------ |
+| **input**      |        |                                           |                          |
+| runs           | string | table with sequencing runs                | `config/runs.csv`        |
+| file_extension | string | extension for input files                 | `pod5`                   |
+| file_regex     | string | pattern to match input files              | `[A-Z]{3}[0-9]{5}...`    |
+| barcodes       | string | used barcodes for demultiplexing          | `1-24`                   |
+| **dorado**     |        |                                           |                          |
+| path           | string | path to the Dorado executable             |                          |
+| simplex / cuda | string | CUDA device: `auto`, `cuda:0`, `cuda:all` | `cuda:all`               |
+| simplex / trim | string | `all` or `none`                           | `none`                   |
+| demultiplexing | bool   | whether to perform demultiplexing         | `True`                   |
+| **report**     |        |                                           |                          |
+| tools          | array  | list of tools to include in the report    | `["pycoQC", "NanoPlot"]` |
