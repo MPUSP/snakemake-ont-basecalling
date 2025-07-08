@@ -33,6 +33,8 @@ properties:
         required:
           - cuda
           - trim
+      demultiplexing:
+        type: boolean
     required:
       - path
       - simplex

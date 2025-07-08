@@ -52,6 +52,23 @@ rule dorado_simplex:
 
 
 # -----------------------------------------------------
+# convert bam to fastq ONLY when not demultiplexing
+# -----------------------------------------------------
+rule samtools_bamtofq:
+    input:
+        "results/{run}/dorado_simplex/{file}.bam",
+    output:
+        "results/{run}/dorado_simplex/{file}.fastq",
+    conda:
+        "../envs/samtools.yml"
+    threads: 1
+    log:
+        "results/{run}/dorado_simplex/{file}_bamtofq.log",
+    shell:
+        "samtools bam2fq {input} > {output} 2> {log}"
+
+
+# -----------------------------------------------------
 # summarize basecalled reads using dorado
 # -----------------------------------------------------
 rule dorado_summary:
@@ -72,95 +89,30 @@ rule dorado_summary:
 
 
 # -----------------------------------------------------
-# demultiplex dorado basecall files
-# -----------------------------------------------------
-checkpoint dorado_demux:
-    input:
-        bam="results/{run}/dorado_simplex/{file}.bam",
-        summary="results/{run}/dorado_summary/{file}.summary",
-    output:
-        fastqs=directory("results/{run}/dorado_demux/{file}"),
-    params:
-        dorado=config["dorado"]["path"],
-        cuda=config["dorado"]["simplex"]["cuda"],
-    conda:
-        "../envs/base.yml"
-    threads: int(workflow.cores * 0.2)
-    wildcard_constraints:
-        file=config["input"]["file_regex"],
-    log:
-        "results/{run}/dorado_demux/{file}.log",
-    shell:
-        "mkdir -p {output.fastqs} && "
-        "{params.dorado} demux "
-        "--threads {threads} "
-        "--emit-fastq "
-        "--output-dir {output.fastqs} "
-        "--no-classify "
-        "{input.bam} 2> {log} "
-
-
-# -----------------------------------------------------
-# aggregate fastq files by prefix
-# -----------------------------------------------------
-rule aggregrate_prefix:
-    input:
-        fastq=get_prefixed_fastq,
-    output:
-        files="results/{run}/dorado_aggregate/prefix/{file}/{barcode}.fastq",
-    conda:
-        "../envs/bgzip.yml"
-    log:
-        "results/{run}/dorado_aggregate/prefix/{file}/{barcode}.log",
-    shell:
-        "cat {input.fastq} > {output.files} 2> {log}"
-
-
-# -----------------------------------------------------
-# aggregate fastq files by filename
-# -----------------------------------------------------
-rule aggregrate_file:
-    input:
-        fastq=get_filenamed_fastq,
-    output:
-        files="results/{run}/dorado_aggregate/file/{barcode}.fastq",
-    conda:
-        "../envs/bgzip.yml"
-    log:
-        "results/{run}/dorado_aggregate/file/{barcode}.log",
-    shell:
-        "cat {input.fastq} > {output.files} 2> {log}"
-
-
-# -----------------------------------------------------
-# collect results by barcode (pseudo rule)
-# -----------------------------------------------------
-rule aggregrate_barcode:
-    input:
-        fastq=get_barcoded_fastq,
-    output:
-        files="results/{run}/dorado_final/input_fastq.txt",
-    conda:
-        "../envs/bgzip.yml"
-    log:
-        "results/{run}/dorado_final/input_fastq.log",
-    shell:
-        "echo {input.fastq} > {output.files} 2> {log}"
-
-
-# -----------------------------------------------------
 # gzip merged fastq files
 # -----------------------------------------------------
 rule gzip:
     input:
-        fastq="results/{run}/dorado_aggregate/file/{barcode}.fastq",
+        fastq=branch(
+            lookup(dpath="dorado/demultiplexing", within=config),
+            then="results/{run}/dorado_aggregate/file/{barcode}.fastq",
+            otherwise="results/{run}/dorado_simplex/{file}.fastq",
+        ),
     output:
-        fastq="results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+        fastq=branch(
+            lookup(dpath="dorado/demultiplexing", within=config),
+            then="results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+            otherwise="results/{run}/dorado_simplex/{file}.fastq.gz",
+        ),
     conda:
         "../envs/bgzip.yml"
     threads: workflow.cores * 0.25
     log:
-        "results/{run}/dorado_aggregate/file/{barcode}_gzip.log",
+        branch(
+            lookup(dpath="dorado/demultiplexing", within=config),
+            then="results/{run}/dorado_aggregate/file/{barcode}_gzip.log",
+            otherwise="results/{run}/dorado_simplex/{file}_gzip.log",
+        ),
     shell:
         "cat {input.fastq} | "
         "bgzip --threads {threads} -c > "

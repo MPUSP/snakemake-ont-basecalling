@@ -60,11 +60,22 @@ def get_filenamed_fastq(wildcards):
 
 
 def get_barcoded_fastq(wildcards):
-    result = expand(
-        "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
-        run=wildcards.run,
-        barcode=parse_barcodes(wildcards.run),
-    )
+    if config["dorado"]["demultiplexing"]:
+        result = expand(
+            "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+            run=wildcards.run,
+            barcode=parse_barcodes(wildcards.run),
+        )
+    else:
+        file_ext = config["input"]["file_extension"]
+        run_dir = runs.loc[wildcards.run, "data_folder"]
+        pattern = f"{run_dir}/{{file}}{file_ext}"
+        files = glob_wildcards(pattern).file
+        result = expand(
+            "results/{run}/dorado_simplex/{file}.fastq.gz",
+            run=wildcards.run,
+            file=files,
+        )
     return result
 
 
