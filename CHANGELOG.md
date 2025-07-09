@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.2...v1.3.0) (2025-07-09)
+
+
+### Features
+
+* added functionality to switch demultiplexing off ([ccd7e4a](https://github.com/MPUSP/snakemake-ont-basecalling/commit/ccd7e4aa9fdcf366fb33d26db5a69f5520acf5fa))
+* added params table ([93b9a9d](https://github.com/MPUSP/snakemake-ont-basecalling/commit/93b9a9d7d0141a3a52b6f435cb346b626c406d35))
+
 ## [1.2.2](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.1...v1.2.2) (2025-06-25)
 
 
