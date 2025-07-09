@@ -44,6 +44,7 @@ configfile: "config/config.yml"
 # -----------------------------------------------------
 include: "rules/common.smk"
 include: "rules/basecall.smk"
+include: "rules/demultiplex.smk"
 include: "rules/qc.smk"
 
 

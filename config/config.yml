@@ -7,8 +7,9 @@ input:
 dorado:
   path: "path/to/dorado"
   simplex:
-    cuda: auto #cuda:all
-    trim: "none" #"all"
+    cuda: "auto"
+    trim: "none"
+  demultiplexing: True
 
 report:
   tools: ["pycoQC", "NanoPlot"]
