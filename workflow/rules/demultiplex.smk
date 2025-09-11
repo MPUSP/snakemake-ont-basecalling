@@ -50,10 +50,10 @@ rule aggregrate_barcode:
     input:
         fastq=get_barcoded_fastq,
     output:
-        files="results/{run}/dorado_final/input_fastq.txt",
+        filelist="results/{run}/dorado_final/input_fastq.txt",
     conda:
         "../envs/bgzip.yml"
     log:
         "results/{run}/dorado_final/input_fastq.log",
     shell:
-        "echo {input.fastq} > {output.files} 2> {log}"
+        "printf '%s\n' $(echo {input.fastq}) > {output.filelist} 2> {log}"
