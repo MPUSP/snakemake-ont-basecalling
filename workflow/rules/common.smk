@@ -21,19 +21,32 @@ def get_pod5(wildcards):
     )
 
 
-def get_prefixed_fastq(wildcards):
-    cp_out = checkpoints.dorado_demux.get(**wildcards).output[0]
+def get_demuxed_fastq(wildcards):
+    # parse file names
+    file_ext = config["input"]["file_extension"]
+    data_dir = runs.loc[wildcards.run, "data_folder"]
+    pattern = f"{data_dir}/{{file}}{file_ext}"
+    files = glob_wildcards(pattern).file
+    # parse prefix
+    cp_out = [
+        checkpoints.dorado_demux.get(
+            run=wildcards.run, barcode=wildcards.barcode, file=curr_file
+        ).output[0]
+        for curr_file in files
+    ]
+    base_dir = os.path.commonpath(cp_out)
     prefix = list(
         set(
             glob_wildcards(
-                os.path.join(cp_out, "{prefix}_barcode{barcode}.fastq")
+                os.path.join(base_dir, "{file}/{prefix}_barcode{barcode}.fastq")
             ).prefix
         )
     )
+    # construct input targets
     result = expand(
         "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}.fastq",
         run=wildcards.run,
-        file=wildcards.file,
+        file=files,
         prefix=prefix,
         barcode=wildcards.barcode,
     )
@@ -45,24 +58,10 @@ def get_prefixed_fastq(wildcards):
     return result
 
 
-def get_filenamed_fastq(wildcards):
-    file_ext = config["input"]["file_extension"]
-    run_dir = runs.loc[wildcards.run, "data_folder"]
-    pattern = f"{run_dir}/{{file}}{file_ext}"
-    files = glob_wildcards(pattern).file
-    result = expand(
-        "results/{run}/dorado_aggregate/prefix/{file}/{barcode}.fastq",
-        run=wildcards.run,
-        file=files,
-        barcode=wildcards.barcode,
-    )
-    return result
-
-
 def get_barcoded_fastq(wildcards):
     if config["dorado"]["demultiplexing"]:
         result = expand(
-            "results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+            "results/{run}/dorado_aggregate/{barcode}.fastq.gz",
             run=wildcards.run,
             barcode=parse_barcodes(wildcards.run),
         )

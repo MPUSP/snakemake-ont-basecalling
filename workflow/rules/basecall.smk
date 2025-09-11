@@ -95,13 +95,13 @@ rule gzip:
     input:
         fastq=branch(
             lookup(dpath="dorado/demultiplexing", within=config),
-            then="results/{run}/dorado_aggregate/file/{barcode}.fastq",
+            then="results/{run}/dorado_aggregate/{barcode}.fastq",
             otherwise="results/{run}/dorado_simplex/{file}.fastq",
         ),
     output:
         fastq=branch(
             lookup(dpath="dorado/demultiplexing", within=config),
-            then="results/{run}/dorado_aggregate/file/{barcode}.fastq.gz",
+            then="results/{run}/dorado_aggregate/{barcode}.fastq.gz",
             otherwise="results/{run}/dorado_simplex/{file}.fastq.gz",
         ),
     conda:
@@ -110,7 +110,7 @@ rule gzip:
     log:
         branch(
             lookup(dpath="dorado/demultiplexing", within=config),
-            then="results/{run}/dorado_aggregate/file/{barcode}_gzip.log",
+            then="results/{run}/dorado_aggregate/{barcode}_gzip.log",
             otherwise="results/{run}/dorado_simplex/{file}_gzip.log",
         ),
     shell:
