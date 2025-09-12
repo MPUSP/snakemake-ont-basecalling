@@ -6,7 +6,7 @@ checkpoint dorado_demux:
         bam="results/{run}/dorado_simplex/{file}.bam",
         summary="results/{run}/dorado_summary/{file}.summary",
     output:
-        fastqs=directory("results/{run}/dorado_demux/{file}"),
+        fastq=directory("results/{run}/dorado_demux/{file}"),
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
@@ -18,29 +18,13 @@ checkpoint dorado_demux:
     log:
         "results/{run}/dorado_demux/{file}.log",
     shell:
-        "mkdir -p {output.fastqs} && "
+        "mkdir -p {output.fastq} && "
         "{params.dorado} demux "
         "--threads {threads} "
         "--emit-fastq "
-        "--output-dir {output.fastqs} "
+        "--output-dir {output.fastq} "
         "--no-classify "
         "{input.bam} 2> {log} "
-
-
-# -----------------------------------------------------
-# aggregate fastq files by prefix
-# -----------------------------------------------------
-rule aggregrate_prefix:
-    input:
-        fastq=get_prefixed_fastq,
-    output:
-        files="results/{run}/dorado_aggregate/prefix/{file}/{barcode}.fastq",
-    conda:
-        "../envs/bgzip.yml"
-    log:
-        "results/{run}/dorado_aggregate/prefix/{file}/{barcode}.log",
-    shell:
-        "cat {input.fastq} > {output.files} 2> {log}"
 
 
 # -----------------------------------------------------
@@ -48,15 +32,15 @@ rule aggregrate_prefix:
 # -----------------------------------------------------
 rule aggregrate_file:
     input:
-        fastq=get_filenamed_fastq,
+        fastq=get_demuxed_fastq,
     output:
-        files="results/{run}/dorado_aggregate/file/{barcode}.fastq",
+        fastq="results/{run}/dorado_aggregate/{barcode}.fastq",
     conda:
         "../envs/bgzip.yml"
     log:
-        "results/{run}/dorado_aggregate/file/{barcode}.log",
+        "results/{run}/dorado_aggregate/{barcode}.log",
     shell:
-        "cat {input.fastq} > {output.files} 2> {log}"
+        "cat {input.fastq} > {output.fastq} 2> {log}"
 
 
 # -----------------------------------------------------
@@ -66,10 +50,10 @@ rule aggregrate_barcode:
     input:
         fastq=get_barcoded_fastq,
     output:
-        files="results/{run}/dorado_final/input_fastq.txt",
+        filelist="results/{run}/dorado_final/input_fastq.txt",
     conda:
         "../envs/bgzip.yml"
     log:
         "results/{run}/dorado_final/input_fastq.log",
     shell:
-        "echo {input.fastq} > {output.files} 2> {log}"
+        "printf '%s\n' $(echo {input.fastq}) > {output.filelist} 2> {log}"

@@ -6,8 +6,8 @@ sdm: conda
 
 # set the default resources for all rules
 default-resources:
-  slurm_partition: "medium"
-  runtime: "2h"
+  slurm_partition: "scc-cpu"
+  runtime: "5min"
   nodes: 1
 
 # rules, which require different (more) resources:
@@ -21,23 +21,29 @@ set-resources:
     slurm_extra: "--gpus=1"
     envmodules: "cuda"
     mem_mb: 16000
+  dorado_summary:
+    mem_mb: 32000
+    cpus_per_task: 40
   dorado_demux:
-    mem_mb: 16000
+    mem_mb: 32000
     cpus_per_task: 40
   gzip:
-    mem_mb: 16000
+    mem_mb: 32000
     cpus_per_task: 40
   pycoQC_report:
-    mem_mb: 16000
+    mem_mb: 32000
     cpus_per_task: 12
+    runtime: "30min"
   nanoplot_report:
-    mem_mb: 16000
+    mem_mb: 32000
     cpus_per_task: 12
+    runtime: "30min"
 
 # threads define how much resources each rule may take, overrides .smk defs:
 set-threads:
   dorado_simplex: 1
   dorado_demux: 40
+  dorado_summary: 40
   gzip: 40
   pycoQC_report: 12
   nanoplot_report: 12
