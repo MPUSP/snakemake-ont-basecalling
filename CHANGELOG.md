@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.3.0...v1.4.0) (2025-09-12)
+
+
+### Features
+
+* eliminated intermediate rule aggregate_prefix; closes [#25](https://github.com/MPUSP/snakemake-ont-basecalling/issues/25) ([5eb545e](https://github.com/MPUSP/snakemake-ont-basecalling/commit/5eb545ee9a719cd68dab6d0d200966923436d75c))
+* various improvements to format and performance ([649f98d](https://github.com/MPUSP/snakemake-ont-basecalling/commit/649f98d37370732814790711a695d21068a4e4fc))
+
+
+### Bug Fixes
+
+* corrected urls to json schema ([d437061](https://github.com/MPUSP/snakemake-ont-basecalling/commit/d4370619829a3b48f4544853efd8cce1c8bb66fc))
+* more fine grained slurm profile ([136efc6](https://github.com/MPUSP/snakemake-ont-basecalling/commit/136efc6ef6f30a02cd0104cfc97bd536b4b6382f))
+* reformat file list to have new line sep ([e0899d3](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e0899d344490a9c738d56c75dfe08e4838dfe3d0))
+
 ## [1.3.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.2.2...v1.3.0) (2025-07-09)
 
 
