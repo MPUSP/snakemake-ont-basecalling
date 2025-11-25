@@ -40,6 +40,11 @@ configfile: "config/config.yml"
 
 
 # -----------------------------------------------------
+# container definition (optional)
+# -----------------------------------------------------
+container: "oras://ghcr.io/mpusp/snakemake-ont-basecalling:latest"
+
+# -----------------------------------------------------
 # load rules
 # -----------------------------------------------------
 include: "rules/common.smk"
