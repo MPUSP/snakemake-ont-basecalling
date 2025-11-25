@@ -44,6 +44,7 @@ configfile: "config/config.yml"
 # -----------------------------------------------------
 container: "oras://ghcr.io/mpusp/snakemake-ont-basecalling:latest"
 
+
 # -----------------------------------------------------
 # load rules
 # -----------------------------------------------------
