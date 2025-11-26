@@ -18,7 +18,7 @@ set-resources:
   dorado_simplex:
     slurm_partition: "scc-gpu"
     cpus_per_task: 4
-    slurm_extra: "--gpus=1"
+    gpus_per_task: 1
     envmodules: "cuda"
     mem_mb: 16000
   dorado_summary:
