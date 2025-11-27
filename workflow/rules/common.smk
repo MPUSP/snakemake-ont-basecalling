@@ -35,20 +35,19 @@ def get_demuxed_fastq(wildcards):
         for curr_file in files
     ]
     base_dir = os.path.commonpath(cp_out)
-    prefix = list(
-        set(
-            glob_wildcards(
-                os.path.join(base_dir, "{file}/{prefix}_barcode{barcode}.fastq")
-            ).prefix
+    globs = glob_wildcards(
+        os.path.join(
+            base_dir, "{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq"
         )
     )
     # construct input targets
     result = expand(
-        "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}.fastq",
+        "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq",
         run=wildcards.run,
         file=files,
-        prefix=prefix,
+        prefix=list(set(globs.prefix)),
         barcode=wildcards.barcode,
+        suffix=list(set(globs.suffix)),
     )
     # add empty dummy file in case a barcode is missing
     for f in list(set(result)):
