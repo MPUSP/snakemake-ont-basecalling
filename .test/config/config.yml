@@ -9,6 +9,7 @@ dorado:
   simplex:
     cuda: "auto"
     trim: "none"
+    extra: ""
   demultiplexing: True
 
 report:

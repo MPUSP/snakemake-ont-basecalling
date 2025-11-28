@@ -18,13 +18,17 @@ checkpoint dorado_demux:
     log:
         "results/{run}/dorado_demux/{file}.log",
     shell:
-        "mkdir -p {output.fastq} && "
-        "{params.dorado} demux "
-        "--threads {threads} "
-        "--emit-fastq "
-        "--output-dir {output.fastq} "
-        "--no-classify "
-        "{input.bam} 2> {log} "
+        """
+        mkdir -p {output.fastq};
+        {params.dorado} demux \
+        --threads {threads} \
+        --emit-fastq \
+        --output-dir {output.fastq} \
+        --no-classify \
+        {input.bam} 2> {log};
+        find {output.fastq} -mindepth 4 -type f -name '*.fastq' -exec mv {{}} {output.fastq}/ \\;
+        find {output.fastq} -mindepth 1 -type d -empty -delete
+        """
 
 
 # -----------------------------------------------------

@@ -28,7 +28,7 @@ The workflow is built using [snakemake](https://snakemake.readthedocs.io/en/stab
 
 ---
 
-<img src="resources/images/dag.png" align="center" />
+<img src="resources/images/dag.svg" align="center" />
 
 ## Requirements
 
