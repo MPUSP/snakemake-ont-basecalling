@@ -3,6 +3,7 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/main.yml/badge.svg)](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/main.yml)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
+[![run with apptainer](https://img.shields.io/badge/run%20with-apptainer-1D355C.svg?labelColor=000000)](https://apptainer.org/)
 [![workflow catalog](https://img.shields.io/badge/Snakemake%20workflow%20catalog-darkgreen)](https://snakemake.github.io/snakemake-workflow-catalog)
 
 A Snakemake workflow to perform basecalling and demultiplexing of Oxford Nanopore ONT data using Dorado.
@@ -32,7 +33,7 @@ The workflow is built using [snakemake](https://snakemake.readthedocs.io/en/stab
 
 ## Requirements
 
-- Dorado (0.8+ tested). It can be downloaded and installed from https://github.com/nanoporetech/dorado.
+- Dorado (1.3+ tested). It can be downloaded and installed from https://github.com/nanoporetech/dorado.
 
 ## Installation
 
@@ -52,19 +53,14 @@ It is recommended to install snakemake and run the workflow with `conda` or `mam
 This step creates a new conda environment called `snakemake-ont-basecalling`.
 
 ```bash
-# create new environment with dependencies & activate it
-mamba create -c conda-forge -c bioconda -n snakemake-ont-basecalling snakemake>=8.24.1 snakemake-executor-plugin-slurm pandas python=3.12
+mamba create -c conda-forge -c bioconda -n snakemake-ont-basecalling snakemake snakemake-executor-plugin-slurm pandas
 conda activate snakemake-ont-basecalling
 ```
 
-**Note:**
-
-All other dependencies for the workflow are **automatically pulled as `conda` environments** by snakemake, when running the workflow with the `--sdm conda` parameter (recommended).
-
 **Step 4: Install Dorado**
 
-- Dorado can be downloaded and installed locally from https://github.com/nanoporetech/dorado.
-- Define the path to the dorado binary in the `config` file
+- Dorado can be downloaded from https://github.com/nanoporetech/dorado.
+- Define the path to the dorado binary in the `config` file (recommended: `./resources`)
 
 **Step 5: Create all rule specific environments (optional)**
 
@@ -89,7 +85,7 @@ The runs table has the following layout:
 
 ### Execution
 
-To define rule specific resources like gpu usage, configuration profiles will be used.
+To define rule specific resources like GPU usage, configuration profiles will be used.
 See [snakemake docs](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) on profiles for more information.
 A [default profile](workflow/profiles/default/config.yaml) for local testing and a slurm specific [cluster profile](workflow/profiles/slurm/config.yaml) is provided with this workflow.
 
@@ -100,19 +96,26 @@ cd snakemake-ont-basecalling
 conda activate snakemake-ont-basecalling
 ```
 
-Adjust options in the default config file `config/config.yml`. Before running the entire workflow, you can perform a dry run using:
+Adjust options in the default config file `config/config.yml`.
+Before running the entire workflow, perform a dry run using:
 
 ```bash
 snakemake --cores 3 --sdm conda --directory .test --dry-run
 ```
 
-To run the complete workflow with test files using **conda**, execute the following command.
+To run the workflow with test files using **conda**:
 
 ```bash
 snakemake --cores 3 --sdm conda --directory .test
 ```
 
-To run the complete workflow with test files on a slurm cluster, adjust the slurm cluster specific `config.yaml` file and execute the following command.
+To run the workflow with test files using **conda and apptainer**, set the dorado path to `/share/resources/dorado-<version>-linux-x64/bin/dorado` and make it available for apptainer using `bind`:
+
+```bash
+snakemake --cores 3 --sdm conda apptainer --directory .test --apptainer-args "--bind ../resources:/share/resources"
+```
+
+To run the workflow with test files on a **slurm cluster**, adjust the slurm-specific profile `workflow/profiles/slurm/config.yaml` file and run:
 
 ```bash
 snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test

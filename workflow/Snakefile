@@ -69,6 +69,13 @@ onerror:
     print(f"{cyan}\n{msg}\n{epilog}\n --- An error occurred! ---\n\n{end}")
 
 
+localrules:
+    download_model,
+    dorado_demux,
+    aggregrate_file,
+    aggregrate_barcode,
+
+
 # -----------------------------------------------------
 # target rules
 # -----------------------------------------------------
