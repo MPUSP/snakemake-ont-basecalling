@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.4.0...v1.5.0) (2025-11-28)
+
+
+### Features
+
+* added automatic apptainer deployment ([9a010c1](https://github.com/MPUSP/snakemake-ont-basecalling/commit/9a010c1ff6206b8119527838b779c7b4f9dd8090))
+* added yaml for container deposition and corresponding image path ([de0b738](https://github.com/MPUSP/snakemake-ont-basecalling/commit/de0b73873127c53d32c6cca56c96fe46f3319f91))
+
+
+### Bug Fixes
+
+* adaptation to new output dir structure from dorado demux 1.3 ([e61bd78](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e61bd786c3d9e243d6baebd837833a31126ca088))
+* adjusted profile to work with latest slurm + executor ([7f0d415](https://github.com/MPUSP/snakemake-ont-basecalling/commit/7f0d4157cbefd13bafe6fb2fcfeeed3da128cdd0))
+* formatting ([f736a27](https://github.com/MPUSP/snakemake-ont-basecalling/commit/f736a27bca4b26026e1080da0a4997d37107d88f))
+* increase resources as new dorado/minION data require more ([297af7a](https://github.com/MPUSP/snakemake-ont-basecalling/commit/297af7a25e8e82b48ed16f538b1c6c017cfa8f89))
+* remove 'slurm_extra' in slurm profile ([763cc39](https://github.com/MPUSP/snakemake-ont-basecalling/commit/763cc39e021c8db3642bb89f653825e7a4c00ef8))
+* update dag ([c4328b2](https://github.com/MPUSP/snakemake-ont-basecalling/commit/c4328b2bbf8cba060237d00ff5483bdc6688eb74))
+
 ## [1.4.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.3.0...v1.4.0) (2025-09-12)
 
 
