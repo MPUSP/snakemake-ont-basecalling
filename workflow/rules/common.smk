@@ -43,8 +43,8 @@ def check_dorado_version(dorado_path, min_dorado_version):
     else:
         raise ValueError(
             f"\n--- Detected dorado version "
-            f"{'.'.join(map(str, version_tuple))} < 1.3.0. "
-            f"Please update dorado to version >= 1.3.0 and re-run the workflow. ---\n"
+            f"{'.'.join(map(str, version_tuple))} < {'.'.join(map(str, min_dorado_version))}. "
+            f"Please update dorado to version >= {'.'.join(map(str, min_dorado_version))} and re-run the workflow. ---\n"
         )
 
 
