@@ -31,6 +31,7 @@ Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.
 # check minimum snakemake version
 # -----------------------------------------------------
 min_version("8.24.1")
+min_dorado_version = (1, 3, 0)
 
 
 # -----------------------------------------------------
@@ -58,7 +59,12 @@ include: "rules/qc.smk"
 # optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
-    print(f"{cyan}\n--- Workflow started! ---\n\n{prolog}\n\n{end}")
+    try:
+        check_dorado_version(config["dorado"]["path"], min_dorado_version)
+    except Exception as e:
+        raise SystemExit(f"{cyan}\n{e}{end}\n")
+
+    print(f"{cyan}\n--- Start workflow! ---\n\n{prolog}\n\n{end}")
 
 
 onsuccess:
@@ -67,6 +73,13 @@ onsuccess:
 
 onerror:
     print(f"{cyan}\n{msg}\n{epilog}\n --- An error occurred! ---\n\n{end}")
+
+
+localrules:
+    download_model,
+    dorado_demux,
+    aggregrate_file,
+    aggregrate_barcode,
 
 
 # -----------------------------------------------------

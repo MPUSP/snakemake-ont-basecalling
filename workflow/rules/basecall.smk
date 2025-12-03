@@ -37,7 +37,7 @@ rule dorado_simplex:
         barcode_kit=lambda wc: runs.loc[wc.run, "barcode_kit"],
         cuda=config["dorado"]["simplex"]["cuda"],
         trim=config["dorado"]["simplex"]["trim"],
-        extra=config["dorado"]["simplex"]["extra"],
+        extra=config["dorado"]["simplex"].get("extra", ""),
     conda:
         "../envs/base.yml"
     threads: 1

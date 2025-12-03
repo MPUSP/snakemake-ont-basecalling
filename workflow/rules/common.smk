@@ -12,6 +12,43 @@ validate(runs, "../../config/schemas/runs.schema.yml")
 
 
 # -----------------------------------------------------
+# helper function
+# -----------------------------------------------------
+def check_dorado_version(dorado_path, min_dorado_version):
+    import subprocess
+
+    version_cmd = [dorado_path, "--version"]
+    try:
+        run_cmd = subprocess.run(version_cmd, capture_output=True, text=True)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Dorado executable not found at '{dorado_path}'.\n\nPlease check your dorado installation path in the config file and re-run the workflow!\n"
+        )
+
+    if run_cmd.stdout == "":
+        version_output = run_cmd.stderr.strip().split()[-1]
+    else:
+        version_output = run_cmd.stdout.strip().split()[-1]
+    version_parts = version_output.split("+")[0].split(".")
+    major = int(version_parts[0])
+    minor = int(version_parts[1]) if len(version_parts) > 1 else 0
+    patch = int(version_parts[2]) if len(version_parts) > 2 else 0
+    version_tuple = (major, minor, patch)
+
+    if version_tuple >= min_dorado_version:
+        print(
+            f"\n--- Detected dorado version: "
+            f"{'.'.join(map(str, version_tuple))} ---\n"
+        )
+    else:
+        raise ValueError(
+            f"\n--- Detected dorado version "
+            f"{'.'.join(map(str, version_tuple))} < {'.'.join(map(str, min_dorado_version))}. "
+            f"Please update dorado to version >= {'.'.join(map(str, min_dorado_version))} and re-run the workflow. ---\n"
+        )
+
+
+# -----------------------------------------------------
 # input functions
 # -----------------------------------------------------
 def get_pod5(wildcards):
