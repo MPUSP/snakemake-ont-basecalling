@@ -66,7 +66,6 @@ onstart:
     except Exception as e:
         raise SystemExit(f"{cyan}\nFailed to determine dorado version: {e} {end}\n")
 
-    # compare tuples (major, minor, patch)
     if version_tuple >= min_dorado_version:
         print(
             f"{cyan}\n--- Detected dorado version: "
