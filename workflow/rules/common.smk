@@ -14,7 +14,7 @@ validate(runs, "../../config/schemas/runs.schema.yml")
 # -----------------------------------------------------
 # helper function
 # -----------------------------------------------------
-def check_dorado_version(dorado_path):
+def check_dorado_version(dorado_path, min_dorado_version):
     import subprocess
 
     version_cmd = [dorado_path, "--version"]
@@ -22,9 +22,8 @@ def check_dorado_version(dorado_path):
         run_cmd = subprocess.run(version_cmd, capture_output=True, text=True)
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"dorado executable not found at '{dorado_path}'.\n\nPlease check your dorado installation path in the config file and re-run the workflow!\n"
+            f"Dorado executable not found at '{dorado_path}'.\n\nPlease check your dorado installation path in the config file and re-run the workflow!\n"
         )
-        return (0, 0, 0)
 
     if run_cmd.stdout == "":
         version_output = run_cmd.stderr.strip().split()[-1]
@@ -34,7 +33,19 @@ def check_dorado_version(dorado_path):
     major = int(version_parts[0])
     minor = int(version_parts[1]) if len(version_parts) > 1 else 0
     patch = int(version_parts[2]) if len(version_parts) > 2 else 0
-    return (major, minor, patch)
+    version_tuple = (major, minor, patch)
+
+    if version_tuple >= min_dorado_version:
+        print(
+            f"\n--- Detected dorado version: "
+            f"{'.'.join(map(str, version_tuple))} ---\n"
+        )
+    else:
+        raise ValueError(
+            f"\n--- Detected dorado version "
+            f"{'.'.join(map(str, version_tuple))} < 1.3.0. "
+            f"Please update dorado to version >= 1.3.0 and re-run the workflow. ---\n"
+        )
 
 
 # -----------------------------------------------------
