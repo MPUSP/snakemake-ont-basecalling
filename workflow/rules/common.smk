@@ -12,6 +12,32 @@ validate(runs, "../../config/schemas/runs.schema.yml")
 
 
 # -----------------------------------------------------
+# helper function
+# -----------------------------------------------------
+def check_dorado_version(dorado_path):
+    import subprocess
+
+    version_cmd = [dorado_path, "--version"]
+    try:
+        run_cmd = subprocess.run(version_cmd, capture_output=True, text=True)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"dorado executable not found at '{dorado_path}'.\n\nPlease check your dorado installation path in the config file and re-run the workflow!\n"
+        )
+        return (0, 0, 0)
+
+    if run_cmd.stdout == "":
+        version_output = run_cmd.stderr.strip().split()[-1]
+    else:
+        version_output = run_cmd.stdout.strip().split()[-1]
+    version_parts = version_output.split("+")[0].split(".")
+    major = int(version_parts[0])
+    minor = int(version_parts[1]) if len(version_parts) > 1 else 0
+    patch = int(version_parts[2]) if len(version_parts) > 2 else 0
+    return (major, minor, patch)
+
+
+# -----------------------------------------------------
 # input functions
 # -----------------------------------------------------
 def get_pod5(wildcards):
