@@ -55,31 +55,29 @@ include: "rules/demultiplex.smk"
 include: "rules/qc.smk"
 
 
-# check if dorado version is >= min_dorado_version
-try:
-    dorado_path = config["dorado"]["path"]
-    version_tuple = check_dorado_version(dorado_path)
-except Exception as e:
-    raise SystemExit(f"{cyan}\nFailed to determine dorado version: {e} {end}\n")
-
-# compare tuples (major, minor, patch)
-if version_tuple >= min_dorado_version:
-    print(
-        f"{cyan}\n--- Detected dorado version: "
-        f"{'.'.join(map(str, version_tuple))} ---{end}\n"
-    )
-else:
-    raise SystemExit(
-        f"{cyan}\n--- Detected dorado version "
-        f"{'.'.join(map(str, version_tuple))} < 1.3.0. "
-        f"Please update dorado to version >= 1.3.0 and re-run the workflow. ---{end}\n"
-    )
-
-
 # -----------------------------------------------------
 # optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
+    # check if dorado version is >= min_dorado_version
+    try:
+        dorado_path = config["dorado"]["path"]
+        version_tuple = check_dorado_version(dorado_path)
+    except Exception as e:
+        raise SystemExit(f"{cyan}\nFailed to determine dorado version: {e} {end}\n")
+
+    # compare tuples (major, minor, patch)
+    if version_tuple >= min_dorado_version:
+        print(
+            f"{cyan}\n--- Detected dorado version: "
+            f"{'.'.join(map(str, version_tuple))} ---{end}\n"
+        )
+    else:
+        raise SystemExit(
+            f"{cyan}\n--- Detected dorado version "
+            f"{'.'.join(map(str, version_tuple))} < 1.3.0. "
+            f"Please update dorado to version >= 1.3.0 and re-run the workflow. ---{end}\n"
+        )
     print(f"{cyan}\n--- Start workflow! ---\n\n{prolog}\n\n{end}")
 
 
