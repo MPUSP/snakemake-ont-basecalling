@@ -77,9 +77,6 @@ onerror:
 
 localrules:
     download_model,
-    dorado_demux,
-    aggregrate_file,
-    aggregrate_barcode,
 
 
 # -----------------------------------------------------
