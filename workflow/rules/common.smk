@@ -50,7 +50,6 @@ def check_dorado_version(dorado_path, min_dorado_version):
 
 def get_run_files(run):
     file_ext = config["input"]["file_extension"]
-    run = run
     run_dir = runs.loc[run, "data_folder"]
     pattern = f"{run_dir}/{{file}}{file_ext}"
     files = glob_wildcards(pattern).file
@@ -81,21 +80,20 @@ def get_demuxed_fastq(wildcards):
     data_dir = runs.loc[wildcards.run, "data_folder"]
     pattern = f"{data_dir}/{{file}}{file_ext}"
     files = glob_wildcards(pattern).file
-
+    # construct base output paths
     cp_out = expand(
         "results/{run}/dorado_demux/{file}",
         run=wildcards.run,
-        barcode=wildcards.barcode,
         file=files,
     )
-
     base_dir = os.path.commonpath(cp_out)
+    # glob pattern for demuxed fastq files
     globs = glob_wildcards(
         os.path.join(
             base_dir, "{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq"
         )
     )
-    # construct input targets
+    # construct all input targets
     result = expand(
         "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq",
         run=wildcards.run,

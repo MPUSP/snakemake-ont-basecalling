@@ -33,7 +33,7 @@ rule dorado_demux:
 # -----------------------------------------------------
 # collect demuxed fastq files (pseudo rule)
 # -----------------------------------------------------
-rule collect_demuxed_fastq:
+checkpoint collect_demuxed_fastq:
     input:
         get_demuxed_flag,
     output:
