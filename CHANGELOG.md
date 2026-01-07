@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.2](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.5.1...v1.5.2) (2026-01-07)
+
+
+### Bug Fixes
+
+* added cores for report, dry-run only ([7181eb3](https://github.com/MPUSP/snakemake-ont-basecalling/commit/7181eb3e17a64458c155b56fd9c1a22a5905ef68))
+* adjust slurm profile ([c94eb13](https://github.com/MPUSP/snakemake-ont-basecalling/commit/c94eb1345072258b7887c1f75e76a8b7ed12d8be))
+* attempt to fix checkpoint problem ([437ec89](https://github.com/MPUSP/snakemake-ont-basecalling/commit/437ec89a633ab23e69fe9a7f37f2ddb228a15ab9))
+* move wildcard constraints, readme instructions ([51061d7](https://github.com/MPUSP/snakemake-ont-basecalling/commit/51061d79e8860856e931295e9f6702eed35494d0))
+* remove checkpoint in dorado_demux to speed up workflow, closes [#32](https://github.com/MPUSP/snakemake-ont-basecalling/issues/32) ([9940694](https://github.com/MPUSP/snakemake-ont-basecalling/commit/99406945cbbb6e15527358cb7ff2eee1dafb8a58))
+* remove checkpoint in dorado_demux to speed up workflow, closes [#32](https://github.com/MPUSP/snakemake-ont-basecalling/issues/32) ([7caf1c1](https://github.com/MPUSP/snakemake-ont-basecalling/commit/7caf1c1cc5344a065a4af60b46f95083a25f9524))
+* update container deployment ([01f7778](https://github.com/MPUSP/snakemake-ont-basecalling/commit/01f7778ae94a5a712325e8f63260b0da92891073))
+* update gh actions ([e603589](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e603589ab8565cb1130a31fb14d60dd2b33535b0))
+
 ## [1.5.1](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.5.0...v1.5.1) (2025-12-03)
 
 
