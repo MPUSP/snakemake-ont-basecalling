@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.1](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.5.0...v1.5.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* included minimum version checking of dorado ([e07ed75](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e07ed753e88b200046f82be38f66dca2bb6607e9))
+* linting issue. ([03e3848](https://github.com/MPUSP/snakemake-ont-basecalling/commit/03e38487dffc4efdc12901d974f40a4ddd086b82))
+* remove hard coded version in print statement. ([99edfa2](https://github.com/MPUSP/snakemake-ont-basecalling/commit/99edfa28ba3c4a8ae48d2a48af27854d5f685227))
+* run computationally non-demanding rules locally ([6e736f9](https://github.com/MPUSP/snakemake-ont-basecalling/commit/6e736f924bc9aef7388968c3a129ddc44d152b9d))
+* solve linting issue due to version checking ([526e9ef](https://github.com/MPUSP/snakemake-ont-basecalling/commit/526e9eff857999f3c85b94697ad49819d34a7cee))
+* treated extra param as being optional in simplex rule. ([fde1b56](https://github.com/MPUSP/snakemake-ont-basecalling/commit/fde1b563cb3b73a23f3921f545674433793c006a))
+* updates to documentation of apptainer ([981a246](https://github.com/MPUSP/snakemake-ont-basecalling/commit/981a246129346e7c76aec5a48343d017e79de332))
+* updates to documentation of apptainer, dorado version checking ([e1b4e70](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e1b4e702bdf7f5395b45242ca5349389d3bae1a2))
+
 ## [1.5.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.4.0...v1.5.0) (2025-11-28)
 
 
