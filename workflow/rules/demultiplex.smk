@@ -12,6 +12,8 @@ rule dorado_demux:
         cuda=config["dorado"]["simplex"]["cuda"],
     conda:
         "../envs/base.yml"
+    wildcard_constraints:
+        file=config["input"]["file_regex"],
     threads: 4
     log:
         "results/{run}/dorado_demux/{file}.log",
@@ -62,8 +64,6 @@ rule aggregrate_file:
         fastq="results/{run}/dorado_aggregate/{barcode}.fastq",
     conda:
         "../envs/bgzip.yml"
-    wildcard_constraints:
-        file=config["input"]["file_regex"],
     log:
         "results/{run}/dorado_aggregate/{barcode}.log",
     shell:
