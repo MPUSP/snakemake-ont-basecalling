@@ -48,6 +48,14 @@ def check_dorado_version(dorado_path, min_dorado_version):
         )
 
 
+def get_run_files(run):
+    file_ext = config["input"]["file_extension"]
+    run_dir = runs.loc[run, "data_folder"]
+    pattern = f"{run_dir}/{{file}}{file_ext}"
+    files = glob_wildcards(pattern).file
+    return files
+
+
 # -----------------------------------------------------
 # input functions
 # -----------------------------------------------------
@@ -58,26 +66,34 @@ def get_pod5(wildcards):
     )
 
 
+def get_demuxed_flag(wildcards):
+    return expand(
+        "results/{run}/dorado_demux/{file}/demux.finished",
+        run=wildcards.run,
+        file=get_run_files(wildcards.run),
+    )
+
+
 def get_demuxed_fastq(wildcards):
     # parse file names
     file_ext = config["input"]["file_extension"]
     data_dir = runs.loc[wildcards.run, "data_folder"]
     pattern = f"{data_dir}/{{file}}{file_ext}"
     files = glob_wildcards(pattern).file
-    # parse prefix
-    cp_out = [
-        checkpoints.dorado_demux.get(
-            run=wildcards.run, barcode=wildcards.barcode, file=curr_file
-        ).output[0]
-        for curr_file in files
-    ]
+    # construct base output paths
+    cp_out = expand(
+        "results/{run}/dorado_demux/{file}",
+        run=wildcards.run,
+        file=files,
+    )
     base_dir = os.path.commonpath(cp_out)
+    # glob pattern for demuxed fastq files
     globs = glob_wildcards(
         os.path.join(
             base_dir, "{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq"
         )
     )
-    # construct input targets
+    # construct all input targets
     result = expand(
         "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq",
         run=wildcards.run,

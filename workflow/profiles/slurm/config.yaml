@@ -14,7 +14,7 @@ default-resources:
 set-resources:
   download_model:
     mem_mb: 48000
-    cpus_per_task: 4
+    cpus_per_task: 1
   dorado_simplex:
     slurm_partition: "scc-gpu"
     gpu: 1
@@ -25,13 +25,13 @@ set-resources:
     cpus_per_task: 40
   dorado_demux:
     mem_mb: 48000
-    cpus_per_task: 40
+    cpus_per_task: 4
   gzip:
     mem_mb: 48000
     cpus_per_task: 40
   pycoQC_report:
     mem_mb: 48000
-    cpus_per_task: 12
+    cpus_per_task: 1
     runtime: "60min"
   nanoplot_report:
     mem_mb: 48000
@@ -41,8 +41,8 @@ set-resources:
 # threads define how much resources each rule may take, overrides .smk defs:
 set-threads:
   dorado_simplex: 1
-  dorado_demux: 40
+  dorado_demux: 4
   dorado_summary: 40
   gzip: 40
-  pycoQC_report: 12
+  pycoQC_report: 1
   nanoplot_report: 12

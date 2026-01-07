@@ -43,7 +43,7 @@ configfile: "config/config.yml"
 # -----------------------------------------------------
 # container definition (optional)
 # -----------------------------------------------------
-container: "oras://ghcr.io/mpusp/snakemake-ont-basecalling:latest"
+containerized: "oras://ghcr.io/mpusp/snakemake-ont-basecalling:latest"
 
 
 # -----------------------------------------------------
@@ -77,9 +77,6 @@ onerror:
 
 localrules:
     download_model,
-    dorado_demux,
-    aggregrate_file,
-    aggregrate_barcode,
 
 
 # -----------------------------------------------------

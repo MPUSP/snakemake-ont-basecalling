@@ -44,7 +44,7 @@ snakemake --cores 3 --sdm conda apptainer --directory .test --apptainer-args "--
 To run the workflow with test files on a **slurm cluster**, adjust the slurm-specific profile `workflow/profiles/slurm/config.yaml` file and run:
 
 ```bash
-snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test
+snakemake --cores 3 --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test
 ```
 
 **Note:**

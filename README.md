@@ -67,8 +67,6 @@ conda activate snakemake-ont-basecalling
 This step creates all conda environments specified in the snakemake rules. This step is optional.
 
 ```bash
-# activate new environment
-conda activate snakemake-ont-basecalling
 snakemake -c 1 --sdm conda --conda-create-envs-only --conda-cleanup-pkgs cache --directory .test
 ```
 
@@ -118,7 +116,7 @@ snakemake --cores 3 --sdm conda apptainer --directory .test --apptainer-args "--
 To run the workflow with test files on a **slurm cluster**, adjust the slurm-specific profile `workflow/profiles/slurm/config.yaml` file and run:
 
 ```bash
-snakemake --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test
+snakemake --cores 3 --sdm conda --workflow-profile workflow/profiles/slurm/ --directory .test
 ```
 
 **Note:**

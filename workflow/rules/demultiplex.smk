@@ -1,20 +1,20 @@
 # -----------------------------------------------------
 # demultiplex dorado basecall files
 # -----------------------------------------------------
-checkpoint dorado_demux:
+rule dorado_demux:
     input:
         bam="results/{run}/dorado_simplex/{file}.bam",
-        summary="results/{run}/dorado_summary/{file}.summary",
     output:
         fastq=directory("results/{run}/dorado_demux/{file}"),
+        flag="results/{run}/dorado_demux/{file}/demux.finished",
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
     conda:
         "../envs/base.yml"
-    threads: int(workflow.cores * 0.2)
     wildcard_constraints:
         file=config["input"]["file_regex"],
+    threads: 4
     log:
         "results/{run}/dorado_demux/{file}.log",
     shell:
@@ -27,7 +27,29 @@ checkpoint dorado_demux:
         --no-classify \
         {input.bam} 2> {log};
         find {output.fastq} -mindepth 4 -type f -name '*.fastq' -exec mv {{}} {output.fastq}/ \\;
-        find {output.fastq} -mindepth 1 -type d -empty -delete
+        find {output.fastq} -mindepth 1 -type d -empty -delete;
+        touch {output.flag}
+        """
+
+
+# -----------------------------------------------------
+# collect demuxed fastq files (pseudo rule)
+# -----------------------------------------------------
+checkpoint collect_demuxed_fastq:
+    input:
+        get_demuxed_flag,
+    output:
+        "results/{run}/dorado_demux/demux_finished.txt",
+    conda:
+        "../envs/base.yml"
+    threads: 1
+    log:
+        "results/{run}/dorado_demux/demux_finished.log",
+    shell:
+        """
+        printf '%s\n' $(echo {input}) > {output} 2> {log};
+        echo 'Collected FASTQ files:' >> {log};
+        echo $(wc -l {output}) >> {log};
         """
 
 
@@ -36,6 +58,7 @@ checkpoint dorado_demux:
 # -----------------------------------------------------
 rule aggregrate_file:
     input:
+        flag=rules.collect_demuxed_fastq.output,
         fastq=get_demuxed_fastq,
     output:
         fastq="results/{run}/dorado_aggregate/{barcode}.fastq",
