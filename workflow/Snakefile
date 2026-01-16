@@ -24,7 +24,7 @@ prolog = f"Output directory: {os.getcwd()}/results"
 
 epilog = f"""
 Written by {", ".join(__authors__)}.
-Max Planck Unit for the Science of Pathogens. Copyright (c) 2025.
+Max Planck Unit for the Science of Pathogens. Copyright (c) 2026.
 """
 
 # -----------------------------------------------------

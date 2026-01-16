@@ -1,23 +1,33 @@
 # -----------------------------------------------------
-# download the basecalling model if needed
+# download the basecalling model using dorado
 # -----------------------------------------------------
 rule download_model:
     output:
-        model=directory("results/{run}/dorado_model"),
         flag="results/{run}/dorado_model/dorado_download.finished",
     params:
         dorado=os.path.normpath(config["dorado"]["path"]),
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
-        model_dir="results/model",
+        mod_model=lambda wc: check_mod_model(wc),
+        model_dir=config["dorado"]["model_dir"],
     conda:
         "../envs/base.yml"
     threads: 1
     log:
         "results/{run}/dorado_model/dorado_download.log",
     shell:
+        "mkdir -p {params.model_dir};"
+        "if [ '{params.mod_model}' != 'None' ]; then "
+        "echo 'Downloading modified bases model: {params.mod_model}' > {log}; "
+        "{params.dorado} download "
+        "--model {params.mod_model} "
+        "--models-directory {params.model_dir} 2>> {log}; "
+        "else "
+        "echo 'No modified bases model specified.' >> {log}; "
+        "echo 'Downloading bases model: {params.model}' >> {log}; "
         "{params.dorado} download "
         "--model {params.model} "
-        "--models-directory {output.model} 2> {log};"
+        "--models-directory {params.model_dir} 2>> {log}; "
+        "fi; "
         "touch {output.flag}"
 
 
@@ -27,13 +37,23 @@ rule download_model:
 rule dorado_simplex:
     input:
         model=rules.download_model.output.flag,
-        model_dir=rules.download_model.output.model,
         file=get_pod5,
     output:
         bam="results/{run}/dorado_simplex/{file}.bam",
     params:
         dorado=config["dorado"]["path"],
+        model_dir=config["dorado"]["model_dir"],
         model=lambda wc: runs.loc[wc.run, "basecalling_model"],
+        mod_model=lambda wc: (
+            ",".join(
+                    [
+                        os.path.join(config["dorado"]["model_dir"], m)
+                        for m in check_mod_model(wc).split(",")
+                    ]
+                )
+                if check_mod_model(wc)
+            else "None"
+        ),
         barcode_kit=lambda wc: runs.loc[wc.run, "barcode_kit"],
         cuda=config["dorado"]["simplex"]["cuda"],
         trim=config["dorado"]["simplex"]["trim"],
@@ -44,13 +64,38 @@ rule dorado_simplex:
     log:
         "results/{run}/dorado_simplex/{file}.log",
     shell:
+        "if [ '{params.mod_model}' != 'None' ]; then "
+        "mod=`echo -e '--modified-bases-models {params.mod_model}'`; "
+        "else "
+        "mod=''; "
+        "fi; "
         "{params.dorado} basecaller "
         "--device {params.cuda} "
         "--kit-name {params.barcode_kit} "
         "--trim {params.trim} "
         "{params.extra} "
-        "{input.model_dir}/{params.model} "
+        "${{mod}} "
+        "{params.model_dir}/{params.model} "
         "{input.file} > {output.bam} 2> {log}"
+
+
+# -----------------------------------------------------
+# aggregate bam files
+# -----------------------------------------------------
+rule aggregate_bam:
+    input:
+        bam=get_input_bams,
+    output:
+        merged_bam="results/{run}/dorado_simplex/{run}_merged.bam",
+    conda:
+        "../envs/samtools.yml"
+    threads: workflow.cores * 0.5
+    wildcard_constraints:
+        file=config["input"]["file_regex"],
+    log:
+        "results/{run}/dorado_simplex/{run}_merge_bams.log",
+    shell:
+        "samtools merge -@ {threads} {output.merged_bam} {input.bam} 2> {log}"
 
 
 # -----------------------------------------------------
@@ -75,16 +120,16 @@ rule samtools_bamtofq:
 # -----------------------------------------------------
 rule dorado_summary:
     input:
-        "results/{run}/dorado_simplex/{file}.bam",
+        rules.aggregate_bam.output.merged_bam,
     output:
-        "results/{run}/dorado_summary/{file}.summary",
+        "results/{run}/dorado_summary/{run}.summary",
     params:
         dorado=config["dorado"]["path"],
     conda:
         "../envs/base.yml"
     threads: 1
     log:
-        "results/{run}/dorado_summary/{file}.log",
+        "results/{run}/dorado_summary/{run}.log",
     shell:
         "{params.dorado} summary "
         "{input} > {output} 2> {log}"

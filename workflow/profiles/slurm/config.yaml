@@ -18,7 +18,7 @@ set-resources:
   dorado_simplex:
     slurm_partition: "scc-gpu"
     gpu: 1
-    cpus_per_gpu: 4
+    cpus_per_gpu: 1
     mem_mb: 16000
   dorado_summary:
     mem_mb: 48000

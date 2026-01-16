@@ -48,12 +48,14 @@ def check_dorado_version(dorado_path, min_dorado_version):
         )
 
 
-def get_run_files(run):
-    file_ext = config["input"]["file_extension"]
-    run_dir = runs.loc[run, "data_folder"]
-    pattern = f"{run_dir}/{{file}}{file_ext}"
-    files = glob_wildcards(pattern).file
-    return files
+def check_mod_model(wc):
+    if "modified_bases_model" in runs.columns:
+        if runs.loc[wc.run, "modified_bases_model"] != "-" or pd.notna(
+            runs.loc[wc.run, "modified_bases_model"]
+        ):
+            return runs.loc[wc.run, "modified_bases_model"]
+    else:
+        return None
 
 
 # -----------------------------------------------------
@@ -66,41 +68,40 @@ def get_pod5(wildcards):
     )
 
 
-def get_demuxed_flag(wildcards):
-    return expand(
-        "results/{run}/dorado_demux/{file}/demux.finished",
-        run=wildcards.run,
-        file=get_run_files(wildcards.run),
-    )
-
-
-def get_demuxed_fastq(wildcards):
+def get_demuxed_file(wildcards):
     # parse file names
     file_ext = config["input"]["file_extension"]
     data_dir = runs.loc[wildcards.run, "data_folder"]
     pattern = f"{data_dir}/{{file}}{file_ext}"
     files = glob_wildcards(pattern).file
-    # construct base output paths
-    cp_out = expand(
-        "results/{run}/dorado_demux/{file}",
-        run=wildcards.run,
-        file=files,
-    )
-    base_dir = os.path.commonpath(cp_out)
-    # glob pattern for demuxed fastq files
-    globs = glob_wildcards(
-        os.path.join(
-            base_dir, "{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq"
+
+    # construct input targets
+    file_type = []
+    if check_mod_model(wildcards) is not None:
+        file_type.append("bam")
+        globs = glob_wildcards(
+            os.path.join(
+                "results/{run}/dorado_demux/barcode{barcode}",
+                "{prefix}_barcode{barcode}_{suffix}_00000000_0.bam",
+            )
         )
-    )
-    # construct all input targets
+    else:
+        file_type.append("fastq")
+        globs = glob_wildcards(
+            os.path.join(
+                "results/{run}/dorado_demux/barcode{barcode}",
+                "{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq",
+            )
+        )
+
     result = expand(
-        "results/{run}/dorado_demux/{file}/{prefix}_barcode{barcode}_{suffix}_00000000_0.fastq",
+        "results/{run}/dorado_demux/barcode{barcode}/{prefix}_barcode{barcode}_{suffix}_00000000_0.{filetype}",
         run=wildcards.run,
         file=files,
         prefix=list(set(globs.prefix)),
         barcode=wildcards.barcode,
         suffix=list(set(globs.suffix)),
+        filetype=file_type,
     )
     # add empty dummy file in case a barcode is missing
     for f in list(set(result)):
@@ -161,6 +162,19 @@ def parse_barcodes(run):
         # convert integers to strings in 2-digit format
         barcodes = [format(i, "02") for i in barcodes]
         return barcodes
+
+
+def get_input_bams(wildcards):
+    file_ext = config["input"]["file_extension"]
+    run_dir = runs.loc[wildcards.run, "data_folder"]
+    pattern = f"{run_dir}/{{file}}{file_ext}"
+    files = glob_wildcards(pattern).file
+    result = expand(
+        "results/{run}/dorado_simplex/{file}.bam",
+        run=wildcards.run,
+        file=files,
+    )
+    return result
 
 
 def get_all_summary(wildcards):

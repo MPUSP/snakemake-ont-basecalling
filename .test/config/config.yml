@@ -6,6 +6,7 @@ input:
 
 dorado:
   path: "path/to/dorado"
+  model_dir: "results/dorado_models"
   simplex:
     cuda: "auto"
     trim: "none"

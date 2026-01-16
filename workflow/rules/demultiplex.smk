@@ -3,71 +3,68 @@
 # -----------------------------------------------------
 rule dorado_demux:
     input:
-        bam="results/{run}/dorado_simplex/{file}.bam",
+        bam="results/{run}/dorado_simplex/{run}_merged.bam",
     output:
-        fastq=directory("results/{run}/dorado_demux/{file}"),
-        flag="results/{run}/dorado_demux/{file}/demux.finished",
+        demux=directory("results/{run}/dorado_demux"),
+        flag="results/{run}/dorado_demux/dorado_demux.finished",
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
+        mod_model=lambda wc: check_mod_model(wc),
     conda:
         "../envs/base.yml"
-    wildcard_constraints:
-        file=config["input"]["file_regex"],
-    threads: 4
+    threads: int(workflow.cores * 0.5)
     log:
-        "results/{run}/dorado_demux/{file}.log",
+        "results/{run}/dorado_demux/{run}_demux.log",
     shell:
         """
-        mkdir -p {output.fastq};
+        mkdir -p {output.demux};
+        if [ '{params.mod_model}' != 'None' ]; then \
         {params.dorado} demux \
         --threads {threads} \
-        --emit-fastq \
-        --output-dir {output.fastq} \
+        --output-dir {output.demux} \
         --no-classify \
         {input.bam} 2> {log};
-        find {output.fastq} -mindepth 4 -type f -name '*.fastq' -exec mv {{}} {output.fastq}/ \\;
-        find {output.fastq} -mindepth 1 -type d -empty -delete;
+        else \
+        {params.dorado} demux \
+        --threads {threads} \
+        --output-dir {output.demux} \
+        --no-classify \
+        --emit-fastq \
+        {input.bam} 2> {log};
+        fi;
+        find {output.demux} -mindepth 4 -type d -path '*/barcode*' -print0 | xargs -0 -I{{}} mv {{}} {output.demux};
+        find {output.demux} -mindepth 4 -type d -path '*/unclassified' -print0 | xargs -0 -I{{}} mv {{}} {output.demux};
         touch {output.flag}
         """
 
 
 # -----------------------------------------------------
-# collect demuxed fastq files (pseudo rule)
+# prepare fastq files by barcode
 # -----------------------------------------------------
-checkpoint collect_demuxed_fastq:
+rule prepare_fastq:
     input:
-        get_demuxed_flag,
+        flag=rules.dorado_demux.output.flag,
+        file=get_demuxed_file,
     output:
-        "results/{run}/dorado_demux/demux_finished.txt",
+        "results/{run}/dorado_aggregate/{barcode}.fastq",
     conda:
-        "../envs/base.yml"
-    threads: 1
-    log:
-        "results/{run}/dorado_demux/demux_finished.log",
-    shell:
-        """
-        printf '%s\n' $(echo {input}) > {output} 2> {log};
-        echo 'Collected FASTQ files:' >> {log};
-        echo $(wc -l {output}) >> {log};
-        """
-
-
-# -----------------------------------------------------
-# aggregate fastq files by filename
-# -----------------------------------------------------
-rule aggregrate_file:
-    input:
-        flag=rules.collect_demuxed_fastq.output,
-        fastq=get_demuxed_fastq,
-    output:
-        fastq="results/{run}/dorado_aggregate/{barcode}.fastq",
-    conda:
-        "../envs/bgzip.yml"
+        "../envs/samtools.yml"
+    threads: int(workflow.cores * 0.2)
+    params:
+        mod_model=lambda wc: check_mod_model(wc),
     log:
         "results/{run}/dorado_aggregate/{barcode}.log",
     shell:
-        "cat {input.fastq} > {output.fastq} 2> {log}"
+        "if [ '{params.mod_model}' != 'None' ]; then "
+        "echo 'extract fastq with modified base tag from BAM file.' > {log}; "
+        "samtools fastq {input.file} "
+        "-T RG,MM,ML "
+        "-@ {threads} > {output} 2>> {log}; "
+        "else "
+        "echo 'copy fastq file.' > {log} 2>&1; "
+        "cp {input.file} > {output} 2>> {log}; "
+        "fi;"
 
 
 # -----------------------------------------------------
