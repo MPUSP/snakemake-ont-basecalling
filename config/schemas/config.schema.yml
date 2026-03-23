@@ -7,12 +7,20 @@ properties:
     properties:
       runs:
         type: string
+        description: "table with sequencing runs"
+        default: config/runs.csv
       file_extension:
         type: string
+        description: "file extension for input files"
+        default: ".pod5"
       file_regex:
         type: string
+        description: "regular expression to match input files"
+        default: "[A-Z]{3}[0-9]{5}..."
       barcodes:
         type: string
+        description: "range of barcodes to process"
+        default: "1-24"
     required:
       - runs
       - file_extension
@@ -23,20 +31,30 @@ properties:
     properties:
       path:
         type: string
+        description: "path to the Dorado executable"
+        default: "none"
       simplex:
         type: object
         properties:
           cuda:
             type: string
+            description: "CUDA device, one of: 'auto', 'cuda:0', 'cuda:all'"
+            default: "cuda:all"
           trim:
             type: string
+            description: "trimming option for Dorado, 'all' or 'none'"
+            default: "none"
           extra:
             type: string
+            description: "extra options for Dorado"
+            default: ""
         required:
           - cuda
           - trim
       demultiplexing:
         type: boolean
+        description: "whether to perform demultiplexing"
+        default: true
     required:
       - path
       - simplex
@@ -47,6 +65,8 @@ properties:
         type: array
         items:
           type: string
+        description: "list of tools to include in the report"
+        default: ["pycoQC", "NanoPlot"]
     required:
       - tools
 required:
