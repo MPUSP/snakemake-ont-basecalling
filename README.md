@@ -1,7 +1,7 @@
 # snakemake-ont-basecalling
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥9.0.0-brightgreen.svg)](https://snakemake.github.io)
-[![GitHub Actions](https://github.com/MPUSP/snakemake-simple-mapping/actions/workflows/snakemake-tests.yml/badge.svg)](https://github.com/MPUSP/snakemake-simple-mapping/actions/workflows/snakemake-tests.yml)
+[![GitHub Actions](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/snakemake-tests.yml/badge.svg)](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/snakemake-tests.yml)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with apptainer](https://img.shields.io/badge/run%20with-apptainer-1D355C.svg?labelColor=000000)](https://apptainer.org/)
 [![workflow catalog](https://img.shields.io/badge/Snakemake%20workflow%20catalog-darkgreen)](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/MPUSP/snakemake-ont-basecalling)
