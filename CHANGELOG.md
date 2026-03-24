@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.5.2...v1.6.0) (2026-03-24)
+
+
+### Features
+
+* update CI and config schema ([5db8166](https://github.com/MPUSP/snakemake-ont-basecalling/commit/5db8166002d1257acd1ef9acb4587facdcb3c26d))
+
+
+### Bug Fixes
+
+* moved config options to schema ([e10afcb](https://github.com/MPUSP/snakemake-ont-basecalling/commit/e10afcb041cf4b4f834d87d79037a003950c5def))
+* update GH workflows ([1e3bb47](https://github.com/MPUSP/snakemake-ont-basecalling/commit/1e3bb473e41857d6adaeb1f29c7514c694999dc2))
+
 ## [1.5.2](https://github.com/MPUSP/snakemake-ont-basecalling/compare/v1.5.1...v1.5.2) (2026-01-07)
 
 
