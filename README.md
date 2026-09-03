@@ -1,10 +1,10 @@
 # snakemake-ont-basecalling
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg)](https://snakemake.github.io)
-[![GitHub actions status](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/main.yml/badge.svg)](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/main.yml)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥9.0.0-brightgreen.svg)](https://snakemake.github.io)
+[![GitHub Actions](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/snakemake-tests.yml/badge.svg)](https://github.com/MPUSP/snakemake-ont-basecalling/actions/workflows/snakemake-tests.yml)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with apptainer](https://img.shields.io/badge/run%20with-apptainer-1D355C.svg?labelColor=000000)](https://apptainer.org/)
-[![workflow catalog](https://img.shields.io/badge/Snakemake%20workflow%20catalog-darkgreen)](https://snakemake.github.io/snakemake-workflow-catalog)
+[![workflow catalog](https://img.shields.io/badge/Snakemake%20workflow%20catalog-darkgreen)](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/MPUSP/snakemake-ont-basecalling)
 
 A Snakemake workflow to perform basecalling and demultiplexing of Oxford Nanopore ONT data using Dorado.
 
@@ -12,7 +12,9 @@ A Snakemake workflow to perform basecalling and demultiplexing of Oxford Nanopor
 
 The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/MPUSP/snakemake-ont-basecalling).
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository.
+Detailed information about input data and workflow configuration can also be found in the [`config/README.md`](config/README.md).
+
+If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository or its DOI.
 
 ## Workflow overview
 
