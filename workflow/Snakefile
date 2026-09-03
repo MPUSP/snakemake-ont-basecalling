@@ -8,7 +8,6 @@ import pandas as pd
 from snakemake.utils import validate
 from snakemake.utils import min_version
 
-
 # -----------------------------------------------------
 # meta data and run info
 # -----------------------------------------------------
@@ -63,7 +62,6 @@ onstart:
         check_dorado_version(config["dorado"]["path"], min_dorado_version)
     except Exception as e:
         raise SystemExit(f"{cyan}\n{e}{end}\n")
-
     print(f"{cyan}\n--- Start workflow! ---\n\n{prolog}\n\n{end}")
 
 

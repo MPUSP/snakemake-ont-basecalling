@@ -58,6 +58,16 @@ def check_mod_model(wc):
         return None
 
 
+def check_barcode_kit(wc):
+    if "barcode_kit" in runs.columns:
+        if runs.loc[wc.run, "barcode_kit"] != "-" and pd.notna(
+            runs.loc[wc.run, "barcode_kit"]
+        ):
+            return runs.loc[wc.run, "barcode_kit"]
+    else:
+        return None
+
+
 # -----------------------------------------------------
 # input functions
 # -----------------------------------------------------
@@ -111,7 +121,7 @@ def get_demuxed_file(wildcards):
     return result
 
 
-def get_barcoded_fastq(wildcards):
+def get_fastq_files(wildcards):
     if config["dorado"]["demultiplexing"]:
         result = expand(
             "results/{run}/dorado_aggregate/{barcode}.fastq.gz",
@@ -119,14 +129,9 @@ def get_barcoded_fastq(wildcards):
             barcode=parse_barcodes(wildcards.run),
         )
     else:
-        file_ext = config["input"]["file_extension"]
-        run_dir = runs.loc[wildcards.run, "data_folder"]
-        pattern = f"{run_dir}/{{file}}{file_ext}"
-        files = glob_wildcards(pattern).file
         result = expand(
-            "results/{run}/dorado_simplex/{file}.fastq.gz",
+            "results/{run}/dorado_simplex/{run}_merged.fastq.gz",
             run=wildcards.run,
-            file=files,
         )
     return result
 

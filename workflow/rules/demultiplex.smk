@@ -7,34 +7,34 @@ rule dorado_demux:
     output:
         demux=directory("results/{run}/dorado_demux"),
         flag="results/{run}/dorado_demux/dorado_demux.finished",
+    log:
+        "results/{run}/dorado_demux/{run}_demux.log",
+    conda:
+        "../envs/base.yml"
+    threads: int(workflow.cores * 0.5)
     params:
         dorado=config["dorado"]["path"],
         cuda=config["dorado"]["simplex"]["cuda"],
         mod_model=lambda wc: check_mod_model(wc),
-    conda:
-        "../envs/base.yml"
-    threads: int(workflow.cores * 0.5)
-    log:
-        "results/{run}/dorado_demux/{run}_demux.log",
     shell:
         """
-        mkdir -p {output.demux};
-        if [ '{params.mod_model}' != 'None' ]; then \
-        {params.dorado} demux \
-        --threads {threads} \
-        --output-dir {output.demux} \
-        --no-classify \
-        {input.bam} 2> {log};
-        else \
-        {params.dorado} demux \
-        --threads {threads} \
-        --output-dir {output.demux} \
-        --no-classify \
-        --emit-fastq \
-        {input.bam} 2> {log};
-        fi;
-        find {output.demux} -mindepth 4 -type d -path '*/barcode*' -print0 | xargs -0 -I{{}} mv {{}} {output.demux};
-        find {output.demux} -mindepth 4 -type d -path '*/unclassified' -print0 | xargs -0 -I{{}} mv {{}} {output.demux};
+        mkdir -p {output.demux}
+        if [ '{params.mod_model}' != 'None' ]; then
+            {params.dorado} demux \
+                --threads {threads} \
+                --output-dir {output.demux} \
+                --no-classify \
+                {input.bam} 2>{log}
+        else
+            {params.dorado} demux \
+                --threads {threads} \
+                --output-dir {output.demux} \
+                --no-classify \
+                --emit-fastq \
+                {input.bam} 2>{log}
+        fi
+        find {output.demux} -mindepth 4 -type d -path '*/barcode*' -print0 | xargs -0 -I{{}} mv {{}} {output.demux}
+        find {output.demux} -mindepth 4 -type d -path '*/unclassified' -print0 | xargs -0 -I{{}} mv {{}} {output.demux}
         touch {output.flag}
         """
 
@@ -48,13 +48,13 @@ rule prepare_fastq:
         file=get_demuxed_file,
     output:
         "results/{run}/dorado_aggregate/{barcode}.fastq",
+    log:
+        "results/{run}/dorado_aggregate/{barcode}.log",
     conda:
         "../envs/samtools.yml"
     threads: int(workflow.cores * 0.2)
     params:
         mod_model=lambda wc: check_mod_model(wc),
-    log:
-        "results/{run}/dorado_aggregate/{barcode}.log",
     shell:
         "if [ '{params.mod_model}' != 'None' ]; then "
         "echo 'extract fastq with modified base tag from BAM file.' > {log}; "
@@ -70,14 +70,14 @@ rule prepare_fastq:
 # -----------------------------------------------------
 # collect results by barcode (pseudo rule)
 # -----------------------------------------------------
-rule aggregrate_barcode:
+rule collect_final_fastq:
     input:
-        fastq=get_barcoded_fastq,
+        fastq=get_fastq_files,
     output:
         filelist="results/{run}/dorado_final/input_fastq.txt",
-    conda:
-        "../envs/bgzip.yml"
     log:
         "results/{run}/dorado_final/input_fastq.log",
+    conda:
+        "../envs/bgzip.yml"
     shell:
         "printf '%s\n' $(echo {input.fastq}) > {output.filelist} 2> {log}"

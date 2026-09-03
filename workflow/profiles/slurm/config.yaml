@@ -25,7 +25,13 @@ set-resources:
     cpus_per_task: 40
   dorado_demux:
     mem_mb: 48000
-    cpus_per_task: 4
+    cpus_per_task: 40
+  prepare_fastq:
+    mem_mb: 48000
+    cpus_per_task: 40
+  samtools_bamtofq:
+    mem_mb: 48000
+    cpus_per_task: 40
   gzip:
     mem_mb: 48000
     cpus_per_task: 40
@@ -41,7 +47,9 @@ set-resources:
 # threads define how much resources each rule may take, overrides .smk defs:
 set-threads:
   dorado_simplex: 1
-  dorado_demux: 4
+  dorado_demux: 40
+  prepare_fastq: 40
+  samtools_bamtofq: 40
   dorado_summary: 40
   gzip: 40
   pycoQC_report: 1
